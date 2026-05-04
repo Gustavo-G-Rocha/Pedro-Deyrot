@@ -26,7 +26,7 @@ export default function App() {
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
       const data = await response.json();
-      
+
       if (!data.erro) {
         setFormData(prev => ({
           ...prev,
@@ -50,7 +50,7 @@ export default function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.termos) {
       alert("Você precisa aceitar os termos e condições.");
       return;
@@ -107,13 +107,13 @@ export default function App() {
     <div className="relative min-h-screen flex items-center justify-center lg:justify-end p-4 lg:pr-32 overflow-hidden">
       {/* Background with yellowish overlay */}
       <div className="absolute inset-0 z-0">
-        <div 
+        <div
           className="absolute inset-0 bg-cover"
-          style={{ 
-            backgroundImage: `url('/fundo.jpg')`,
+          style={{
+            backgroundImage: `url('/fundo.png')`,
             filter: 'grayscale(0.1) contrast(1.1)',
             backgroundPosition: 'center 25%', // Posiciona a imagem um pouco mais alto do que o ajuste anterior
-            transform: 'scale(1.1) translate(-3%, 0%)' 
+            transform: 'scale(1.1) translate(-3%, 0%)'
           }}
         />
         <div className="absolute inset-0 bg-[#eab308]/20 mix-blend-multiply" />
@@ -121,7 +121,7 @@ export default function App() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a]/90 via-transparent to-[#1a1a1a]/40" />
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative z-10 w-full max-w-lg bg-[#242424]/95 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
@@ -141,49 +141,49 @@ export default function App() {
             <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="nome">
               Nome completo
             </label>
-              <input
-                id="nome"
-                type="text"
-                name="nome"
-                required
-                value={formData.nome}
-                onChange={handleChange}
-                placeholder="Digite seu nome completo"
-                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
-              />
-            </div>
+            <input
+              id="nome"
+              type="text"
+              name="nome"
+              required
+              value={formData.nome}
+              onChange={handleChange}
+              placeholder="Digite seu nome completo"
+              className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+            />
+          </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="whatsapp">
-                WhatsApp
-              </label>
-              <input
-                id="whatsapp"
-                type="tel"
-                name="whatsapp"
-                required
-                value={formData.whatsapp}
-                onChange={handleChange}
-                placeholder="(00) 00000-0000"
-                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="whatsapp">
+              WhatsApp
+            </label>
+            <input
+              id="whatsapp"
+              type="tel"
+              name="whatsapp"
+              required
+              value={formData.whatsapp}
+              onChange={handleChange}
+              placeholder="(00) 00000-0000"
+              className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+            />
+          </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="email">
-                E-mail
-              </label>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="exemplo@email.com"
-                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="email">
+              E-mail
+            </label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="exemplo@email.com"
+              className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+            />
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -306,7 +306,7 @@ export default function App() {
             </motion.div>
           )}
         </AnimatePresence>
-        
+
         <footer className="mt-8 pt-6 border-t border-white/5 text-center">
         </footer>
       </motion.div>
