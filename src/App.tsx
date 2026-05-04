@@ -105,18 +105,13 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center lg:justify-end p-4 lg:pr-32 overflow-hidden">
-      {/* Background with yellowish overlay */}
-      <div className="absolute inset-0 z-0 bg-[#1a1a1a]">
-        <div
-          className="absolute inset-0 bg-contain bg-no-repeat bg-center"
-          style={{
-            backgroundImage: `url('/fundo.png')`
-          }}
-        />
-        <div className="absolute inset-0 bg-[#eab308]/20 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-gradient-to-l from-[#1a1a1a]/95 via-[#1a1a1a]/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a]/90 via-transparent to-[#1a1a1a]/40" />
-      </div>
+      {/* Background */}
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center"
+        style={{
+          backgroundImage: `url('/fundo.png')`
+        }}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
