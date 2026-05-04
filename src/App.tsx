@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 
@@ -111,7 +111,6 @@ export default function App() {
           className="absolute inset-0 bg-cover"
           style={{
             backgroundImage: `url('/fundo.png')`,
-            filter: 'grayscale(0.1) contrast(1.1)',
             backgroundPosition: 'center 25%', // Posiciona a imagem um pouco mais alto do que o ajuste anterior
             transform: 'scale(1.1) translate(-3%, 0%)'
           }}
