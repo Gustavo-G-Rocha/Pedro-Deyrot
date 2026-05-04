@@ -106,13 +106,11 @@ export default function App() {
   return (
     <div className="relative min-h-screen flex items-center justify-center lg:justify-end p-4 lg:pr-32 overflow-hidden">
       {/* Background with yellowish overlay */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 bg-[#1a1a1a]">
         <div
-          className="absolute inset-0 bg-cover"
+          className="absolute inset-0 bg-contain bg-no-repeat bg-center"
           style={{
-            backgroundImage: `url('/fundo.png')`,
-            backgroundPosition: 'center 25%', // Posiciona a imagem um pouco mais alto do que o ajuste anterior
-            transform: 'scale(1.1) translate(-3%, 0%)'
+            backgroundImage: `url('/fundo.png')`
           }}
         />
         <div className="absolute inset-0 bg-[#eab308]/20 mix-blend-multiply" />
