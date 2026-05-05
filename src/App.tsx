@@ -116,7 +116,7 @@ export default function App() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-lg bg-[#242424]/95 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
+        className="relative z-10 w-full max-w-lg bg-[#242424]/70 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
       >
         <header className="mb-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-2">
