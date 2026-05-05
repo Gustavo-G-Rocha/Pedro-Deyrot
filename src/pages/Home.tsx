@@ -18,6 +18,7 @@ export default function Home() {
 
             {/* Conteúdo */}
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -25,7 +26,7 @@ export default function Home() {
                     className="text-center mb-16 max-w-4xl mx-auto"
                 >
                     <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
-                        Transformando o <span className="text-[#eab308]">Pará</span>
+                        Transformando o <span className="text-[#eab308]">Paraná</span>
                         <br />
                         com você
                     </h1>

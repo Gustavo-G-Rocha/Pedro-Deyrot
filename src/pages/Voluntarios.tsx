@@ -17,6 +17,7 @@ export default function Voluntarios() {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
     const [isSearchingCep, setIsSearchingCep] = useState(false);
+    const [termosError, setTermosError] = useState(false);
 
     const fetchCep = async (cep: string) => {
         const cleanCep = cep.replace(/\D/g, '');
@@ -46,16 +47,22 @@ export default function Voluntarios() {
         const { name, value, type } = e.target;
         const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
         setFormData(prev => ({ ...prev, [name]: val }));
+
+        // Limpar erro de termos quando checkbox for marcado
+        if (name === 'termos' && val) {
+            setTermosError(false);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!formData.termos) {
-            alert("Você precisa aceitar os termos e condições.");
+            setTermosError(true);
             return;
         }
 
+        setTermosError(false);
         setStatus('loading');
         try {
             const response = await fetch('/api/submit', {
@@ -240,18 +247,33 @@ export default function Voluntarios() {
                         </div>
                     </div>
 
-                    <div className="flex items-start gap-3 py-2">
-                        <input
-                            id="termos"
-                            type="checkbox"
-                            name="termos"
-                            checked={formData.termos}
-                            onChange={handleChange}
-                            className="mt-1 h-4 w-4 rounded border-zinc-700 bg-zinc-800 text-black focus:ring-offset-0 focus:ring-0 cursor-pointer"
-                        />
-                        <label htmlFor="termos" className="text-xs text-zinc-400 leading-relaxed cursor-pointer select-none">
-                            Eu concordo com os termos e condições e autorizo o envio dos meus dados para fins de apoio e comunicação.
-                        </label>
+                    <div>
+                        <div className="flex items-start gap-3 py-2">
+                            <input
+                                id="termos"
+                                type="checkbox"
+                                name="termos"
+                                checked={formData.termos}
+                                onChange={handleChange}
+                                className={`mt-1 h-4 w-4 rounded border-zinc-700 bg-zinc-800 text-black focus:ring-offset-0 focus:ring-0 cursor-pointer ${termosError ? 'ring-2 ring-red-500' : ''
+                                    }`}
+                            />
+                            <label htmlFor="termos" className={`text-xs leading-relaxed cursor-pointer select-none ${termosError ? 'text-red-400' : 'text-zinc-400'
+                                }`}>
+                                Eu concordo com os termos e condições e autorizo o envio dos meus dados para fins de apoio e comunicação.
+                            </label>
+                        </div>
+                        {termosError && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="mt-2 flex items-center gap-2 text-red-400 text-xs"
+                            >
+                                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                                <span>Você precisa aceitar os termos e condições para continuar.</span>
+                            </motion.div>
+                        )}
                     </div>
 
                     <button
