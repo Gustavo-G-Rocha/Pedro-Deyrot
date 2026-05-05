@@ -1,17 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
-import { collection, addDoc, deleteDoc, doc, getDocs, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc, getDocs, updateDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { auth, db, storage } from '../config/firebase';
 import { motion, AnimatePresence } from 'motion/react';
-import { LogOut, Plus, Trash2, ExternalLink, Loader2, AlertCircle, CheckCircle2, Image as ImageIcon } from 'lucide-react';
+import { LogOut, Plus, Trash2, ExternalLink, Loader2, AlertCircle, CheckCircle2, Image as ImageIcon, Edit2, X } from 'lucide-react';
+
+interface Botao {
+    texto: string;
+    link: string;
+}
 
 interface Evento {
     id: string;
     titulo: string;
     imagemUrl: string;
     link: string;
+    descricao?: string;
+    botoes?: Botao[];
     criadoEm: Date;
 }
 
@@ -23,10 +30,15 @@ export default function AdminDashboard() {
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     // Form state
+    const [editandoId, setEditandoId] = useState<string | null>(null);
     const [titulo, setTitulo] = useState('');
     const [link, setLink] = useState('');
+    const [descricao, setDescricao] = useState('');
     const [imagem, setImagem] = useState<File | null>(null);
     const [imagemPreview, setImagemPreview] = useState<string | null>(null);
+    const [botoes, setBotoes] = useState<Botao[]>([]);
+    const [novoBotaoTexto, setNovoBotaoTexto] = useState('');
+    const [novoBotaoLink, setNovoBotaoLink] = useState('');
 
     useEffect(() => {
         // Verificar autenticação
@@ -52,6 +64,8 @@ export default function AdminDashboard() {
                     titulo: data.titulo,
                     imagemUrl: data.imagemUrl,
                     link: data.link,
+                    descricao: data.descricao || '',
+                    botoes: data.botoes || [],
                     criadoEm: data.criadoEm?.toDate() || new Date()
                 });
             });
@@ -84,7 +98,7 @@ export default function AdminDashboard() {
     const handleAddEvento = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!imagem) {
+        if (!editandoId && !imagem) {
             showMessage('error', 'Selecione uma imagem');
             return;
         }
@@ -92,35 +106,87 @@ export default function AdminDashboard() {
         setSaving(true);
 
         try {
-            // Upload da imagem
-            const imageRef = ref(storage, `eventos/${Date.now()}_${imagem.name}`);
-            await uploadBytes(imageRef, imagem);
-            const imagemUrl = await getDownloadURL(imageRef);
+            let imagemUrl = imagemPreview;
 
-            // Adicionar evento ao Firestore
-            await addDoc(collection(db, 'eventos'), {
-                titulo,
-                imagemUrl,
-                link,
-                criadoEm: Timestamp.now()
-            });
+            // Se houver nova imagem, fazer upload
+            if (imagem) {
+                const imageRef = ref(storage, `eventos/${Date.now()}_${imagem.name}`);
+                await uploadBytes(imageRef, imagem);
+                imagemUrl = await getDownloadURL(imageRef);
+            }
 
-            showMessage('success', 'Evento adicionado com sucesso!');
+            if (editandoId) {
+                // Atualizar evento existente
+                const eventoRef = doc(db, 'eventos', editandoId);
+                const updateData: any = {
+                    titulo,
+                    link,
+                    descricao,
+                    botoes,
+                };
+
+                // Só atualizar imagem se foi alterada
+                if (imagem && imagemUrl) {
+                    // Deletar imagem antiga se houver
+                    const eventoAntigo = eventos.find(e => e.id === editandoId);
+                    if (eventoAntigo?.imagemUrl) {
+                        const oldImageRef = ref(storage, eventoAntigo.imagemUrl);
+                        await deleteObject(oldImageRef).catch(() => { });
+                    }
+                    updateData.imagemUrl = imagemUrl;
+                }
+
+                await updateDoc(eventoRef, updateData);
+                showMessage('success', 'Evento atualizado com sucesso!');
+            } else {
+                // Adicionar novo evento
+                await addDoc(collection(db, 'eventos'), {
+                    titulo,
+                    imagemUrl,
+                    link,
+                    descricao,
+                    botoes,
+                    criadoEm: Timestamp.now()
+                });
+                showMessage('success', 'Evento adicionado com sucesso!');
+            }
 
             // Limpar formulário
-            setTitulo('');
-            setLink('');
-            setImagem(null);
-            setImagemPreview(null);
+            limparFormulario();
 
             // Recarregar eventos
             carregarEventos();
         } catch (error) {
-            console.error('Erro ao adicionar evento:', error);
-            showMessage('error', 'Erro ao adicionar evento');
+            console.error('Erro ao salvar evento:', error);
+            showMessage('error', 'Erro ao salvar evento');
         } finally {
             setSaving(false);
         }
+    };
+
+    const limparFormulario = () => {
+        setEditandoId(null);
+        setTitulo('');
+        setLink('');
+        setDescricao('');
+        setImagem(null);
+        setImagemPreview(null);
+        setBotoes([]);
+        setNovoBotaoTexto('');
+        setNovoBotaoLink('');
+    };
+
+    const handleEditEvento = (evento: Evento) => {
+        setEditandoId(evento.id);
+        setTitulo(evento.titulo);
+        setLink(evento.link);
+        setDescricao(evento.descricao || '');
+        setBotoes(evento.botoes || []);
+        setImagemPreview(evento.imagemUrl);
+        setImagem(null); // Não definir arquivo, apenas preview
+
+        // Scroll para o formulário
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleDeleteEvento = async (evento: Evento) => {
@@ -206,12 +272,33 @@ export default function AdminDashboard() {
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="bg-[#242424] rounded-2xl p-6 border border-white/10"
+                        className={`bg-[#242424] rounded-2xl p-6 border ${editandoId ? 'border-[#eab308]' : 'border-white/10'}`}
                     >
-                        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                            <Plus className="w-5 h-5 text-[#eab308]" />
-                            Adicionar Novo Evento
-                        </h2>
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                                {editandoId ? (
+                                    <>
+                                        <Edit2 className="w-5 h-5 text-[#eab308]" />
+                                        Editar Evento
+                                    </>
+                                ) : (
+                                    <>
+                                        <Plus className="w-5 h-5 text-[#eab308]" />
+                                        Adicionar Novo Evento
+                                    </>
+                                )}
+                            </h2>
+                            {editandoId && (
+                                <button
+                                    type="button"
+                                    onClick={limparFormulario}
+                                    className="p-2 hover:bg-red-500/10 text-red-400 rounded-lg transition-colors"
+                                    title="Cancelar edição"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            )}
+                        </div>
 
                         <form onSubmit={handleAddEvento} className="space-y-4">
                             <div>
@@ -244,7 +331,72 @@ export default function AdminDashboard() {
 
                             <div>
                                 <label className="block text-xs font-semibold text-zinc-500 uppercase mb-2">
-                                    Imagem do Evento
+                                    Descrição Detalhada (Opcional)
+                                </label>
+                                <textarea
+                                    value={descricao}
+                                    onChange={(e) => setDescricao(e.target.value)}
+                                    placeholder="Descreva os detalhes do evento..."
+                                    rows={4}
+                                    className="w-full bg-[#1a1a1a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-500 resize-none"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-semibold text-zinc-500 uppercase mb-2">
+                                    Botões com Links (Opcional)
+                                </label>
+                                <div className="space-y-3">
+                                    {botoes.map((botao, index) => (
+                                        <div key={index} className="flex items-center gap-2 bg-[#1a1a1a] p-3 rounded-lg">
+                                            <div className="flex-1">
+                                                <div className="text-sm text-white font-semibold">{botao.texto}</div>
+                                                <div className="text-xs text-zinc-500 truncate">{botao.link}</div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setBotoes(botoes.filter((_, i) => i !== index))}
+                                                className="p-2 hover:bg-red-500/10 text-red-400 rounded-lg transition-colors"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={novoBotaoTexto}
+                                            onChange={(e) => setNovoBotaoTexto(e.target.value)}
+                                            placeholder="Texto do botão"
+                                            className="flex-1 bg-[#1a1a1a] text-white rounded-lg p-3 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-500 text-sm"
+                                        />
+                                        <input
+                                            type="url"
+                                            value={novoBotaoLink}
+                                            onChange={(e) => setNovoBotaoLink(e.target.value)}
+                                            placeholder="Link do botão"
+                                            className="flex-1 bg-[#1a1a1a] text-white rounded-lg p-3 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-500 text-sm"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (novoBotaoTexto && novoBotaoLink) {
+                                                    setBotoes([...botoes, { texto: novoBotaoTexto, link: novoBotaoLink }]);
+                                                    setNovoBotaoTexto('');
+                                                    setNovoBotaoLink('');
+                                                }
+                                            }}
+                                            className="px-4 py-3 bg-[#eab308] text-black rounded-lg hover:bg-[#ca8a04] transition-colors font-semibold text-sm"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-semibold text-zinc-500 uppercase mb-2">
+                                    Imagem do Evento {editandoId && <span className="text-zinc-600">(opcional - manter atual se não enviar nova)</span>}
                                 </label>
                                 <div className="relative">
                                     <input
@@ -253,7 +405,7 @@ export default function AdminDashboard() {
                                         onChange={handleImageChange}
                                         className="hidden"
                                         id="imagem-upload"
-                                        required
+                                        required={!editandoId}
                                     />
                                     <label
                                         htmlFor="imagem-upload"
@@ -261,7 +413,7 @@ export default function AdminDashboard() {
                                     >
                                         <div className="flex items-center justify-center gap-2 text-zinc-400">
                                             <ImageIcon className="w-5 h-5" />
-                                            <span>{imagem ? imagem.name : 'Clique para selecionar'}</span>
+                                            <span>{imagem ? imagem.name : editandoId ? 'Clique para alterar imagem' : 'Clique para selecionar'}</span>
                                         </div>
                                     </label>
                                 </div>
@@ -291,11 +443,13 @@ export default function AdminDashboard() {
                             >
                                 {saving ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : editandoId ? (
+                                    <Edit2 className="w-5 h-5" />
                                 ) : (
                                     <Plus className="w-5 h-5" />
                                 )}
                                 <span className="uppercase tracking-widest text-sm">
-                                    {saving ? 'Salvando...' : 'Adicionar Evento'}
+                                    {saving ? 'Salvando...' : editandoId ? 'Atualizar Evento' : 'Adicionar Evento'}
                                 </span>
                             </button>
                         </form>
@@ -346,13 +500,22 @@ export default function AdminDashboard() {
                                                     {evento.criadoEm.toLocaleDateString('pt-BR')}
                                                 </p>
                                             </div>
-                                            <button
-                                                onClick={() => handleDeleteEvento(evento)}
-                                                className="flex-shrink-0 p-2 hover:bg-red-500/10 text-red-400 rounded-lg transition-colors"
-                                                title="Deletar evento"
-                                            >
-                                                <Trash2 className="w-5 h-5" />
-                                            </button>
+                                            <div className="flex flex-col gap-2">
+                                                <button
+                                                    onClick={() => handleEditEvento(evento)}
+                                                    className="flex-shrink-0 p-2 hover:bg-[#eab308]/10 text-[#eab308] rounded-lg transition-colors"
+                                                    title="Editar evento"
+                                                >
+                                                    <Edit2 className="w-5 h-5" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteEvento(evento)}
+                                                    className="flex-shrink-0 p-2 hover:bg-red-500/10 text-red-400 rounded-lg transition-colors"
+                                                    title="Deletar evento"
+                                                >
+                                                    <Trash2 className="w-5 h-5" />
+                                                </button>
+                                            </div>
                                         </div>
                                     </motion.div>
                                 ))
