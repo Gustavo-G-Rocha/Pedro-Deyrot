@@ -119,12 +119,7 @@ export default function App() {
         className="relative z-10 w-full max-w-lg bg-[#242424]/70 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
       >
         <header className="mb-8 text-center">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            {/* Como você enviou a imagem pelo chat, você precisará fazer o upload dela pelo explorador de arquivos ao lado para a pasta public/ com o nome "logo.png", ou alterar o nome no src abaixo. */}
-            <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain invert" />
-            <h1 className="text-3xl font-black tracking-tighter text-white uppercase">PEDRO DEYROT</h1>
-          </div>
-          <div className="h-1 w-12 bg-[#eab308] mx-auto mb-4" />
+          <img src="/logo-header.png" alt="Pedro Deyrot - Pré Candidato a Deputado Federal" className="w-full max-w-md mx-auto mb-4" />
           <p className="text-zinc-400 text-sm font-medium">Junte-se à mudança. Seja um voluntário.</p>
         </header>
 
