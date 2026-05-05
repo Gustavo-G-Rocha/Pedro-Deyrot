@@ -119,7 +119,7 @@ export default function App() {
         className="relative z-10 w-full max-w-lg bg-[#242424]/70 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
       >
         <header className="mb-8 text-center">
-          <img src="/logo-header.png" alt="Pedro Deyrot - Pré Candidato a Deputado Federal" className="w-full max-w-md mx-auto mb-4" />
+          <img src="/logo-header.png" alt="Pedro Deyrot - Pré Candidato a Deputado Federal" className="w-full max-w-md mx-auto mb-4 lg:hidden" />
           <p className="text-zinc-400 text-sm font-medium">Junte-se à mudança. Seja um voluntário.</p>
         </header>
 
