@@ -1,29 +1,63 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowRight, Users, Calendar } from 'lucide-react';
+import { ArrowRight, Users, Calendar, ChevronDown } from 'lucide-react';
 
 export default function Home() {
     return (
-        <div className="relative min-h-screen overflow-hidden">
-            {/* Background com blur */}
+        <div className="relative min-h-[200vh] overflow-hidden">
+            {/* Background - Desktop */}
             <div
-                className="absolute inset-0 z-0 bg-cover bg-center blur-lg scale-110"
+                className="absolute inset-0 z-0 bg-contain bg-top bg-no-repeat hidden md:block"
                 style={{
-                    backgroundImage: `url('/fundohome.png')`
+                    backgroundImage: `url('/fundohome.png')`,
+                    backgroundSize: '100% auto'
                 }}
             />
 
-            {/* Overlay escuro */}
-            <div className="absolute inset-0 bg-black/50 z-0" />
+            {/* Background - Mobile (9:16) */}
+            <div
+                className="absolute inset-0 z-0 bg-contain bg-top bg-no-repeat md:hidden"
+                style={{
+                    backgroundImage: `url('/fundomobile.png')`,
+                    backgroundSize: '100% auto'
+                }}
+            />
+
+            {/* Seta de scroll animada */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{
+                    opacity: [1, 0.5, 1],
+                    y: [0, 15, 0],
+                    scale: [1, 1.1, 1]
+                }}
+                transition={{
+                    opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                    y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="fixed bottom-12 left-1/2 -translate-x-1/2 z-20 cursor-pointer"
+                onClick={() => {
+                    window.scrollTo({
+                        top: window.innerHeight * 1.2,
+                        behavior: 'smooth'
+                    });
+                }}
+            >
+                <div className="bg-[#eab308]/20 rounded-full p-4 backdrop-blur-sm border-2 border-[#eab308]">
+                    <ChevronDown className="w-8 h-8 text-[#eab308] drop-shadow-2xl" strokeWidth={3} />
+                </div>
+            </motion.div>
 
             {/* Conteúdo */}
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[130vh] md:pt-[90vh] pb-20 content-section">
 
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
                     transition={{ duration: 0.8 }}
-                    className="text-center mb-16 max-w-4xl mx-auto"
+                    className="text-center mb-12 md:mb-16 max-w-4xl mx-auto"
                 >
                     <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
                         Transformando o <span className="text-[#eab308]">Paraná</span>
@@ -40,9 +74,10 @@ export default function Home() {
                 {/* Cards de ação */}
                 <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                     <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.8, delay: 0.1 }}
                     >
                         <Link
                             to="/voluntarios"
@@ -61,9 +96,10 @@ export default function Home() {
                     </motion.div>
 
                     <motion.div
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
                     >
                         <Link
                             to="/eventos"
@@ -84,9 +120,11 @@ export default function Home() {
 
                 {/* Chamada secundária */}
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.6 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{
+                        duration: 0.8
+                    }}
                     className="text-center mt-16"
                 >
                     <p className="text-white/80 text-lg">
@@ -94,6 +132,6 @@ export default function Home() {
                     </p>
                 </motion.div>
             </div>
-        </div>
+        </div >
     );
 }
