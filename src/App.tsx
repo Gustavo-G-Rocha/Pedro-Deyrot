@@ -104,7 +104,7 @@ export default function App() {
   ];
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center lg:justify-end p-4 lg:pr-32 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center lg:justify-end p-4 lg:pr-8 overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center"
