@@ -68,7 +68,7 @@ export default function Voluntarios() {
             const response = await fetch('/api/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({ ...formData, tipo: 'voluntario' }),
             });
 
             const data = await response.json();

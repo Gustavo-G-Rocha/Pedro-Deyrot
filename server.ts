@@ -2,6 +2,10 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+// Carregar variáveis de ambiente
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,15 +22,22 @@ async function startServer() {
       const formData = req.body;
       const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
+      console.log('📨 [API] Recebido formulário:', {
+        email: formData.email,
+        tipo: formData.tipo,
+        nome: formData.nome
+      });
+
       if (!webhookUrl) {
-        console.warn("GOOGLE_SHEETS_WEBHOOK_URL is not defined. Data will not be sent to Google Sheets.");
-        // We'll return success anyway for the demo, but log the warning
-        return res.status(200).json({ 
-          success: true, 
-          message: "Form received! (Warning: Webhook not configured)", 
-          data: formData 
+        console.warn("⚠️ [API] GOOGLE_SHEETS_WEBHOOK_URL não está configurada no .env");
+        console.log("✅ [API] Retornando sucesso sem enviar para Google Sheets");
+        return res.status(200).json({
+          success: true,
+          message: "Formulário recebido! (Aviso: Webhook não configurado)"
         });
       }
+
+      console.log('📤 [API] Enviando para Google Sheets:');
 
       const response = await fetch(webhookUrl, {
         method: "POST",
@@ -36,16 +47,19 @@ async function startServer() {
         body: JSON.stringify(formData),
       });
 
+      console.log('📨 [API] Resposta do webhook:', response.status, response.statusText);
+
       if (response.ok) {
+        console.log('✅ [API] Enviado para Google Sheets com sucesso!');
         res.status(200).json({ success: true, message: "Informações enviadas com sucesso!" });
       } else {
         const errorText = await response.text();
-        console.error("Webhook error:", errorText);
+        console.error("❌ [API] Erro no webhook:", response.status, errorText);
         res.status(500).json({ success: false, error: "Erro ao enviar para Google Sheets" });
       }
     } catch (error) {
-      console.error("Submission error:", error);
-      res.status(500).json({ success: false, error: "Erro interno do servidor" });
+      console.error("❌ [API] Erro no servidor:", error);
+      res.status(500).json({ success: false, error: "Erro interno do servidor: " + error.message });
     }
   });
 
