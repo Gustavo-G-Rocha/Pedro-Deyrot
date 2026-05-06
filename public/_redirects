@@ -1,0 +1,8 @@
+# Cloudflare Pages - SPA Redirect Rules
+# Todas as rotas que não são arquivos devem redirecionar para index.html
+
+# Funções da API (não redirecionar)
+/api/* 200
+
+# Todas as outras rotas redirecionam para index.html (SPA)
+/* /index.html 200
