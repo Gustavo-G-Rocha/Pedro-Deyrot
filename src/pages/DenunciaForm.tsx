@@ -160,7 +160,7 @@ export default function DenunciaForm() {
             <div
                 className="absolute inset-0 z-0 bg-cover bg-center"
                 style={{
-                    backgroundImage: `url('/fundo.png')`
+                    backgroundImage: `url('/safadao@2x.png')`
                 }}
             />
 
@@ -169,11 +169,30 @@ export default function DenunciaForm() {
                 animate={{ opacity: 1, y: 0 }}
                 className="relative z-10 w-full max-w-lg bg-[#242424]/70 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
             >
-                <header className="mb-8 text-center">
+                <header className="mb-6 text-center">
                     <img src="/logo-header.png" alt="Pedro Deyrot - Pré Candidato a Deputado Federal" className="w-full max-w-md mx-auto mb-4 lg:hidden" />
-                    <h1 className="text-2xl font-black text-white mb-2">Acesso aos Arquivos de Denúncia</h1>
-                    <p className="text-zinc-400 text-sm font-medium">Preencha o formulário para acessar os documentos.</p>
+                    <h1 className="text-3xl font-black text-white mb-3">📄 Acesso aos Arquivos de Denúncia</h1>
+                    <p className="text-zinc-300 text-base font-semibold mb-4">
+                        Para acessar os documentos completos, preencha o formulário abaixo
+                    </p>
                 </header>
+
+                {/* Aviso Destacado */}
+                <div className="bg-yellow-500/20 border-2 border-yellow-500 rounded-xl p-4 mb-6">
+                    <div className="flex items-start gap-3">
+                        <span className="text-2xl">⚠️</span>
+                        <div className="flex-1">
+                            <p className="text-yellow-100 font-bold text-sm mb-1">
+                                ATENÇÃO: Preenchimento Obrigatório
+                            </p>
+                            <p className="text-yellow-200 text-xs leading-relaxed">
+                                Você precisa preencher <strong>todos os campos</strong> deste formulário antes de ter acesso
+                                aos arquivos da denúncia. Após o envio, você será redirecionado automaticamente para a página
+                                com os documentos completos.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
@@ -331,8 +350,12 @@ export default function DenunciaForm() {
                         ) : (
                             <CheckCircle2 className="w-5 h-5 transition-transform group-hover:scale-110" />
                         )}
-                        <span className="uppercase tracking-widest text-sm">Acessar Arquivos</span>
+                        <span className="uppercase tracking-widest text-sm font-black">Enviar e Acessar Documentos</span>
                     </button>
+
+                    <p className="text-center text-xs text-zinc-400 mt-3">
+                        Ao clicar no botão acima, você será redirecionado para a página com todos os arquivos da denúncia
+                    </p>
                 </form>
 
                 <AnimatePresence>
