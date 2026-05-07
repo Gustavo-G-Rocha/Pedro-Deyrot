@@ -133,11 +133,19 @@ export default function DenunciaArquivos() {
                     {/* Título da Denúncia */}
                     <div className="text-center mb-12">
                         <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
-                            Denúncia de Irregularidades
+                            DOSSIÊ DE FATOS DOCUMENTADOS
                         </h1>
-                        <p className="text-zinc-400 text-lg">
-                            Documento completo com evidências e análises
+                        <p className="text-zinc-400 text-lg mb-4">
+                            Estrutura Societária do Grupo WS e Contratos Públicos
                         </p>
+                        <div className="inline-block bg-white/10 rounded-lg px-6 py-3 border border-white/20">
+                            <p className="text-sm text-zinc-300 font-semibold">
+                                ARTISTA: WESLEY OLIVEIRA DA SILVA | WESLEY SAFADÃO
+                            </p>
+                            <p className="text-xs text-zinc-400 mt-1">
+                                Data de levantamento: 28 de abril de 2026
+                            </p>
+                        </div>
                     </div>
 
                     {/* Conteúdo da Denúncia */}
