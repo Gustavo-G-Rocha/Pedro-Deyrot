@@ -37,9 +37,9 @@ export default function DenunciaArquivos() {
                     style={{
                         backgroundImage: `url('/safadao@2x.png')`,
                         backgroundRepeat: 'repeat',
-                        backgroundSize: '150px auto',
+                        backgroundSize: '200px auto',
                         backgroundPosition: 'top left',
-                        opacity: 0.3
+                        opacity: 0.25
                     }}
                 />
 
@@ -69,9 +69,9 @@ export default function DenunciaArquivos() {
                 style={{
                     backgroundImage: `url('/safadao@2x.png')`,
                     backgroundRepeat: 'repeat',
-                    backgroundSize: '150px auto',
+                    backgroundSize: '200px auto',
                     backgroundPosition: 'top left',
-                    opacity: 0.3
+                    opacity: 0.25
                 }}
             />
 
@@ -79,7 +79,7 @@ export default function DenunciaArquivos() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-[#242424]/90 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-12 border border-white/10 mb-8"
+                    className="bg-[#242424]/50 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-12 border border-white/20 mb-8"
                 >
                     {/* Header */}
                     <div className="flex items-center justify-between flex-wrap gap-4 mb-8 pb-6 border-b border-white/10">
