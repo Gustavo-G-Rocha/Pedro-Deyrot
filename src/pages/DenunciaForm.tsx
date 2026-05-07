@@ -27,6 +27,7 @@ export default function DenunciaForm() {
     const [message, setMessage] = useState('');
     const [isSearchingCep, setIsSearchingCep] = useState(false);
     const [termosError, setTermosError] = useState(false);
+    const [whatsappError, setWhatsappError] = useState(false);
 
     // Verificar se usuário já tem acesso ao carregar a página
     useEffect(() => {
@@ -72,6 +73,9 @@ export default function DenunciaForm() {
         if (name === 'termos' && val) {
             setTermosError(false);
         }
+        if (name === 'whatsapp' && val) {
+            setWhatsappError(false);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -82,7 +86,17 @@ export default function DenunciaForm() {
             return;
         }
 
+        // Validar telefone (9 ou 10 dígitos)
+        const cleanPhone = formData.whatsapp.replace(/\D/g, '');
+        if (cleanPhone.length < 9 || cleanPhone.length > 11) {
+            setWhatsappError(true);
+            setStatus('error');
+            setMessage('O número de WhatsApp deve ter entre 9 e 11 dígitos.');
+            return;
+        }
+
         setTermosError(false);
+        setWhatsappError(false);
         setStatus('loading');
 
         try {
@@ -228,8 +242,12 @@ export default function DenunciaForm() {
                                 value={formData.whatsapp}
                                 onChange={handleChange}
                                 placeholder="(00) 00000-0000"
-                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+                                className={`w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm ${whatsappError ? 'ring-2 ring-red-500' : ''
+                                    }`}
                             />
+                            {whatsappError && (
+                                <p className="text-red-400 text-xs mt-1 ml-1">O número deve ter entre 9 e 11 dígitos</p>
+                            )}
                         </div>
 
                         <div>

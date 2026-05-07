@@ -31,11 +31,15 @@ export default function DenunciaArquivos() {
 
     if (!hasAccess) {
         return (
-            <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
+            <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-black">
                 <div
-                    className="absolute inset-0 z-0 bg-cover bg-center"
+                    className="absolute inset-0 z-0"
                     style={{
-                        backgroundImage: `url('/fundo.png')`
+                        backgroundImage: `url('/safadao@2x.png')`,
+                        backgroundRepeat: 'repeat',
+                        backgroundSize: '150px auto',
+                        backgroundPosition: 'top left',
+                        opacity: 0.3
                     }}
                 />
 
@@ -59,11 +63,15 @@ export default function DenunciaArquivos() {
     }
 
     return (
-        <div className="relative min-h-screen p-4 lg:p-8 overflow-hidden">
+        <div className="relative min-h-screen p-4 lg:p-8 overflow-hidden bg-black">
             <div
-                className="absolute inset-0 z-0 bg-cover bg-center"
+                className="absolute inset-0 z-0"
                 style={{
-                    backgroundImage: `url('/fundo.png')`
+                    backgroundImage: `url('/safadao@2x.png')`,
+                    backgroundRepeat: 'repeat',
+                    backgroundSize: '150px auto',
+                    backgroundPosition: 'top left',
+                    opacity: 0.3
                 }}
             />
 
