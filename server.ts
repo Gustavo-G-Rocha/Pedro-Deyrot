@@ -3,6 +3,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
+import os from "os";
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -59,14 +60,14 @@ async function startServer() {
       }
     } catch (error) {
       console.error("❌ [API] Erro no servidor:", error);
-      res.status(500).json({ success: false, error: "Erro interno do servidor: " + error.message });
+      res.status(500).json({ success: false, error: "Erro interno do servidor." });
     }
   });
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { middlewareMode: true, host: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
@@ -79,7 +80,20 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    const getNetworkIp = () => {
+      const interfaces = os.networkInterfaces();
+      for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]!) {
+          if (iface.family === 'IPv4' && !iface.internal && !name.toLowerCase().includes('vpn')) {
+            return iface.address;
+          }
+        }
+      }
+      return '192.168.x.x'; // Fallback
+    };
+    
+    console.log(`\n🚀 Servidor rodando localmente: http://localhost:${PORT}`);
+    console.log(`📱 Servidor rodando na rede: http://${getNetworkIp()}:${PORT}\n`);
   });
 }
 

@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Função auxiliar para verificar se usuário está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Collection 'denuncias_formulario' - Dados dos formulários preenchidos
+    // Permite leitura e escrita para qualquer pessoa (formulário público)
+    match /denuncias_formulario/{document=**} {
+      // Permitir criar novos documentos (enviar formulário)
+      allow create: if true;
+      
+      // Permitir leitura para verificar se email já existe
+      // Mas apenas o campo 'email' para validação
+      allow read: if true;
+      
+      // Não permitir atualização ou deleção por usuários não autenticados
+      allow update, delete: if isAuthenticated();
+    }
+    
+    // Collection 'denuncias' - Dossiês de denúncias criados pelo admin
+    // Apenas admins podem criar/editar/deletar
+    match /denuncias/{denunciaId} {
+      // Permitir leitura pública (para exibir as denúncias publicadas)
+      allow read: if true;
+      
+      // Apenas usuários autenticados podem criar ou deletar
+      allow create, delete: if isAuthenticated();
+      
+      // Atualização: admins podem tudo; público pode apenas atualizar estatísticas
+      allow update: if isAuthenticated() ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estatisticas']);
+      
+      // Subcoleção 'leads' - Formulários preenchidos pelos visitantes
+      match /leads/{leadId} {
+        allow create: if true;
+        allow read, update, delete: if isAuthenticated();
+      }
+    }
+    
+    // Collection 'campanhas' - Campanhas de conscientização
+    match /campanhas/{campanhaId} {
+      // Permitir leitura pública (para exibir as campanhas)
+      allow read: if true;
+      
+      // Apenas usuários autenticados podem criar, atualizar ou deletar
+      allow create, update, delete: if isAuthenticated();
+    }
+    
+    // Collection 'eventos' - Eventos cadastrados
+    match /eventos/{eventoId} {
+      // Permitir leitura pública (para exibir os eventos)
+      allow read: if true;
+      
+      // Apenas usuários autenticados podem criar, atualizar ou deletar
+      allow create, update, delete: if isAuthenticated();
+      
+      // Subcoleção 'dadospessoas' - Leads/inscrições dos eventos
+      // Permitir que qualquer pessoa crie (formulário público)
+      match /dadospessoas/{pessoaId} {
+        allow create: if true;
+        allow read, update, delete: if isAuthenticated();
+      }
+    }
+    
+    // Bloquear acesso a qualquer outra collection não especificada
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

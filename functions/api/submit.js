@@ -6,7 +6,11 @@ export async function onRequestPost(context) {
     const formData = await context.request.json();
     const webhookUrl = context.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
-    console.log('📨 Recebido formulário:', { email: formData.email, tipo: formData.tipo });
+    console.log('� Recebendo dados do formulário:', {
+      tipo: formData.tipo,
+      nomeEvento: formData.nomeEvento,
+      nome: formData.nome
+    });
 
     if (!webhookUrl) {
       console.warn("⚠️ GOOGLE_SHEETS_WEBHOOK_URL não está configurada");
@@ -19,6 +23,8 @@ export async function onRequestPost(context) {
       });
     }
 
+    console.log('🔗 Enviando para webhook:', webhookUrl.substring(0, 50) + '...');
+
     // Enviar para Google Sheets
     const response = await fetch(webhookUrl, {
       method: "POST",
@@ -28,8 +34,15 @@ export async function onRequestPost(context) {
       body: JSON.stringify(formData),
     });
 
+    console.log('📡 Resposta do webhook:', {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok
+    });
+
     if (response.ok) {
-      console.log('✅ Enviado para Google Sheets com sucesso');
+      const responseData = await response.json();
+      console.log('✅ Resposta JSON:', responseData);
       return new Response(JSON.stringify({ 
         success: true, 
         message: "Informações enviadas com sucesso!" 
@@ -42,7 +55,8 @@ export async function onRequestPost(context) {
       console.error("❌ Erro no webhook:", response.status, errorText);
       return new Response(JSON.stringify({ 
         success: false, 
-        error: "Erro ao enviar para Google Sheets" 
+        error: "Erro ao enviar para Google Sheets",
+        details: errorText.substring(0, 200)
       }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }

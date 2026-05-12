@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
+import { db } from '../config/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export default function Voluntarios() {
     const [formData, setFormData] = useState({
@@ -65,6 +67,19 @@ export default function Voluntarios() {
         setTermosError(false);
         setStatus('loading');
         try {
+            // Salvar no Firebase
+            try {
+                await addDoc(collection(db, 'voluntarios'), {
+                    ...formData,
+                    tipo: 'voluntario',
+                    timestamp: serverTimestamp(),
+                    createdAt: new Date().toISOString()
+                });
+            } catch (fbError) {
+                console.error("Erro ao salvar no Firebase:", fbError);
+                // Não interrompe o fluxo para tentar enviar pro Google Sheets
+            }
+
             const response = await fetch('/api/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -142,6 +157,7 @@ export default function Voluntarios() {
                             required
                             value={formData.nome}
                             onChange={handleChange}
+                            autoComplete="name"
                             placeholder="Digite seu nome completo"
                             className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                         />
@@ -158,6 +174,8 @@ export default function Voluntarios() {
                             required
                             value={formData.whatsapp}
                             onChange={handleChange}
+                            autoComplete="tel"
+                            inputMode="numeric"
                             placeholder="(00) 00000-0000"
                             className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                         />
@@ -174,6 +192,8 @@ export default function Voluntarios() {
                             required
                             value={formData.email}
                             onChange={handleChange}
+                            autoComplete="email"
+                            inputMode="email"
                             placeholder="exemplo@email.com"
                             className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                         />
@@ -192,6 +212,8 @@ export default function Voluntarios() {
                                 value={formData.cep}
                                 onChange={handleChange}
                                 onBlur={(e) => fetchCep(e.target.value)}
+                                autoComplete="postal-code"
+                                inputMode="numeric"
                                 placeholder="00000-000"
                                 className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                             />
@@ -207,6 +229,7 @@ export default function Voluntarios() {
                                 required
                                 value={formData.bairro}
                                 onChange={handleChange}
+                                autoComplete="address-level3"
                                 placeholder="Ex: Centro"
                                 className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                             />
@@ -224,6 +247,7 @@ export default function Voluntarios() {
                                 required
                                 value={formData.estado}
                                 onChange={handleChange}
+                                autoComplete="address-level1"
                                 className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all appearance-none cursor-pointer shadow-sm"
                             >
                                 <option value="">Selecione o estado</option>
@@ -241,6 +265,7 @@ export default function Voluntarios() {
                                 required
                                 value={formData.cidade}
                                 onChange={handleChange}
+                                autoComplete="address-level2"
                                 placeholder="Ex: Acará"
                                 className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                             />
@@ -258,9 +283,19 @@ export default function Voluntarios() {
                                 className={`mt-1 h-4 w-4 rounded border-zinc-700 bg-zinc-800 text-black focus:ring-offset-0 focus:ring-0 cursor-pointer ${termosError ? 'ring-2 ring-red-500' : ''
                                     }`}
                             />
-                            <label htmlFor="termos" className={`text-xs leading-relaxed cursor-pointer select-none ${termosError ? 'text-red-400' : 'text-zinc-400'
+                            <label htmlFor="termos" className={`text-xs leading-relaxed select-none ${termosError ? 'text-red-400' : 'text-zinc-400'
                                 }`}>
-                                Eu concordo com os termos e condições e autorizo o envio dos meus dados para fins de apoio e comunicação.
+                                Eu concordo com os{' '}
+                                <a
+                                    href="/LGPD"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[#eab308] hover:text-[#ca8a04] underline cursor-pointer"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    termos e condições
+                                </a>{' '}
+                                e autorizo o envio dos meus dados para fins de apoio e comunicação.
                             </label>
                         </div>
                         {termosError && (
@@ -316,8 +351,6 @@ export default function Voluntarios() {
                     )}
                 </AnimatePresence>
 
-                <footer className="mt-8 pt-6 border-t border-white/5 text-center">
-                </footer>
             </motion.div>
         </div>
     );

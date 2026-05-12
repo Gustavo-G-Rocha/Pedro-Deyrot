@@ -1,0 +1,57 @@
+{
+    "indexes": [
+        {
+            "collectionGroup": "denuncias_formulario",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "email",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "timestamp",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "denuncias",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "atualizadoEm",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "campanhas",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "criadoEm",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "eventos",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "criadoEm",
+                    "order": "DESCENDING"
+                }
+            ]
+        }
+    ],
+    "fieldOverrides": []
+}

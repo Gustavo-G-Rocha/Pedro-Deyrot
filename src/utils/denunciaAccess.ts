@@ -9,9 +9,6 @@ export interface DenunciaFormData {
     nome: string;
     whatsapp: string;
     email: string;
-    cep: string;
-    bairro: string;
-    estado: string;
     cidade: string;
     termos: boolean;
 }
@@ -19,7 +16,7 @@ export interface DenunciaFormData {
 /**
  * Verifica se o usuário já tem acesso (via cookie ou Firebase)
  */
-export async function checkDenunciaAccess(): Promise<{ hasAccess: boolean; userData?: any }> {
+export async function checkDenunciaAccess(): Promise<{ hasAccess: boolean; userData?: Record<string, unknown> }> {
     // Primeiro verificar cookie
     const cookieData = Cookies.get(COOKIE_NAME);
     if (cookieData) {
@@ -68,11 +65,12 @@ export async function registerDenunciaAccess(formData: DenunciaFormData): Promis
  */
 export async function saveDenunciaToFirebase(formData: DenunciaFormData): Promise<string> {
     try {
-        const denunciaRef = collection(db, 'denuncias');
+        // Usar 'denuncias_formulario' para dados do formulário (diferente de 'denuncias' que são os dossiês)
+        const denunciaRef = collection(db, 'denuncias_formulario');
 
         const docRef = await addDoc(denunciaRef, {
             ...formData,
-            tipo: 'denuncia',
+            tipo: 'formulario_acesso',
             timestamp: serverTimestamp(),
             createdAt: new Date().toISOString(),
             ip: await getUserIP()
@@ -90,13 +88,15 @@ export async function saveDenunciaToFirebase(formData: DenunciaFormData): Promis
  */
 export async function checkEmailExists(email: string): Promise<boolean> {
     try {
-        const denunciaRef = collection(db, 'denuncias');
+        // Usar 'denuncias_formulario' para verificar emails do formulário
+        const denunciaRef = collection(db, 'denuncias_formulario');
         const q = query(denunciaRef, where('email', '==', email));
         const querySnapshot = await getDocs(q);
 
         return !querySnapshot.empty;
     } catch (error) {
         console.error('Erro ao verificar email:', error);
+        // Retornar false em caso de erro para não bloquear o usuário
         return false;
     }
 }

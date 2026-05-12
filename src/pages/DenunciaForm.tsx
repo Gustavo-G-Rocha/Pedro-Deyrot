@@ -16,16 +16,12 @@ export default function DenunciaForm() {
         nome: '',
         whatsapp: '',
         email: '',
-        cep: '',
-        bairro: '',
-        estado: '',
         cidade: '',
-        termos: false
+        termos: true
     });
 
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
-    const [isSearchingCep, setIsSearchingCep] = useState(false);
     const [termosError, setTermosError] = useState(false);
     const [whatsappError, setWhatsappError] = useState(false);
 
@@ -40,30 +36,6 @@ export default function DenunciaForm() {
         };
         checkAccess();
     }, [navigate]);
-
-    const fetchCep = async (cep: string) => {
-        const cleanCep = cep.replace(/\D/g, '');
-        if (cleanCep.length !== 8) return;
-
-        setIsSearchingCep(true);
-        try {
-            const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
-            const data = await response.json();
-
-            if (!data.erro) {
-                setFormData(prev => ({
-                    ...prev,
-                    bairro: data.bairro || prev.bairro,
-                    cidade: data.localidade || prev.cidade,
-                    estado: data.uf || prev.estado
-                }));
-            }
-        } catch (error) {
-            console.error("Erro ao buscar CEP:", error);
-        } finally {
-            setIsSearchingCep(false);
-        }
-    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -155,19 +127,6 @@ export default function DenunciaForm() {
         }
     };
 
-    const states = [
-        { uf: "AC", name: "Acre" }, { uf: "AL", name: "Alagoas" }, { uf: "AP", name: "Amapá" },
-        { uf: "AM", name: "Amazonas" }, { uf: "BA", name: "Bahia" }, { uf: "CE", name: "Ceará" },
-        { uf: "DF", name: "Distrito Federal" }, { uf: "ES", name: "Espírito Santo" },
-        { uf: "GO", name: "Goiás" }, { uf: "MA", name: "Maranhão" }, { uf: "MT", name: "Mato Grosso" },
-        { uf: "MS", name: "Mato Grosso do Sul" }, { uf: "MG", name: "Minas Gerais" },
-        { uf: "PA", name: "Pará" }, { uf: "PB", name: "Paraíba" }, { uf: "PR", name: "Paraná" },
-        { uf: "PE", name: "Pernambuco" }, { uf: "PI", name: "Piauí" }, { uf: "RJ", name: "Rio de Janeiro" },
-        { uf: "RN", name: "Rio Grande do Norte" }, { uf: "RS", name: "Rio Grande do Sul" },
-        { uf: "RO", name: "Rondônia" }, { uf: "RR", name: "Roraima" }, { uf: "SC", name: "Santa Catarina" },
-        { uf: "SP", name: "São Paulo" }, { uf: "SE", name: "Sergipe" }, { uf: "TO", name: "Tocantins" }
-    ];
-
     return (
         <div className="relative min-h-screen flex items-center justify-center p-3 md:p-4 overflow-hidden bg-black">
             {/* Background Pattern - All screens */}
@@ -257,57 +216,7 @@ export default function DenunciaForm() {
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="cep">
-                                CEP {isSearchingCep && <Loader2 className="inline w-3 h-3 animate-spin ml-2 text-[#eab308]" />}
-                            </label>
-                            <input
-                                id="cep"
-                                type="text"
-                                name="cep"
-                                required
-                                value={formData.cep}
-                                onChange={handleChange}
-                                onBlur={(e) => fetchCep(e.target.value)}
-                                placeholder="00000-000"
-                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="bairro">
-                                Bairro
-                            </label>
-                            <input
-                                id="bairro"
-                                type="text"
-                                name="bairro"
-                                required
-                                value={formData.bairro}
-                                onChange={handleChange}
-                                placeholder="Ex: Centro"
-                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="estado">
-                                Estado
-                            </label>
-                            <select
-                                id="estado"
-                                name="estado"
-                                required
-                                value={formData.estado}
-                                onChange={handleChange}
-                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all appearance-none cursor-pointer shadow-sm"
-                            >
-                                <option value="">Selecione o estado</option>
-                                {states.map(s => <option key={s.uf} value={s.uf}>{s.name} ({s.uf})</option>)}
-                            </select>
-                        </div>
+                    <div>
                         <div>
                             <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="cidade">
                                 Cidade
@@ -336,9 +245,19 @@ export default function DenunciaForm() {
                                 className={`mt-1 h-4 w-4 rounded border-zinc-700 bg-zinc-800 text-black focus:ring-offset-0 focus:ring-0 cursor-pointer ${termosError ? 'ring-2 ring-red-500' : ''
                                     }`}
                             />
-                            <label htmlFor="termos" className={`text-xs leading-relaxed cursor-pointer select-none ${termosError ? 'text-red-400' : 'text-zinc-400'
+                            <label htmlFor="termos" className={`text-xs leading-relaxed select-none ${termosError ? 'text-red-400' : 'text-zinc-400'
                                 }`}>
-                                Eu concordo com os termos e condições e autorizo o envio dos meus dados para acesso aos documentos.
+                                Eu concordo com os{' '}
+                                <a
+                                    href="/LGPD"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[#eab308] hover:text-[#ca8a04] underline cursor-pointer"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    termos e condições
+                                </a>{' '}
+                                e autorizo o envio dos meus dados para acesso aos documentos.
                             </label>
                         </div>
                         {termosError && (

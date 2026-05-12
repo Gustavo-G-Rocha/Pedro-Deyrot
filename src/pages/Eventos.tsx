@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Calendar, Loader2, ExternalLink, X } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Calendar, Loader2, ExternalLink, Users, Search } from 'lucide-react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { useNavigate } from 'react-router-dom';
 
 interface Botao {
     texto: string;
@@ -17,12 +18,18 @@ interface Evento {
     descricao?: string;
     botoes?: Botao[];
     criadoEm: Date;
+    slug?: string;
+    metaInscricoes?: number;
+    totalInscricoes?: number;
+    inscricaoHabilitada?: boolean;
+    linkFormularioExterno?: string;
 }
 
 export default function Eventos() {
     const [eventos, setEventos] = useState<Evento[]>([]);
     const [loading, setLoading] = useState(true);
-    const [eventoSelecionado, setEventoSelecionado] = useState<Evento | null>(null);
+    const [busca, setBusca] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         carregarEventos();
@@ -32,19 +39,42 @@ export default function Eventos() {
         try {
             const querySnapshot = await getDocs(collection(db, 'eventos'));
             const eventosData: Evento[] = [];
-            querySnapshot.forEach((doc) => {
+
+            // Carregar eventos e suas inscrições em paralelo
+            const eventosPromises = querySnapshot.docs.map(async (doc) => {
                 const data = doc.data();
-                eventosData.push({
+
+                // Contar inscrições se há uma meta definida E formulário interno habilitado
+                let totalInscricoes = 0;
+                if (data.metaInscricoes && data.metaInscricoes > 0 && data.inscricaoHabilitada !== false) {
+                    try {
+                        const inscricoesSnapshot = await getDocs(
+                            collection(db, 'eventos', doc.id, 'dadospessoas')
+                        );
+                        totalInscricoes = inscricoesSnapshot.size;
+                    } catch (error) {
+                        console.error('Erro ao contar inscrições:', error);
+                    }
+                }
+
+                return {
                     id: doc.id,
                     titulo: data.titulo,
                     imagemUrl: data.imagemUrl,
                     link: data.link,
                     descricao: data.descricao || '',
                     botoes: data.botoes || [],
-                    criadoEm: data.criadoEm?.toDate() || new Date()
-                });
+                    criadoEm: data.criadoEm?.toDate() || new Date(),
+                    slug: data.slug || doc.id,
+                    metaInscricoes: data.metaInscricoes || 0,
+                    totalInscricoes,
+                    inscricaoHabilitada: data.inscricaoHabilitada !== false,
+                    linkFormularioExterno: data.linkFormularioExterno || ''
+                };
             });
-            setEventos(eventosData.sort((a, b) => b.criadoEm.getTime() - a.criadoEm.getTime()));
+
+            const eventosCarregados = await Promise.all(eventosPromises);
+            setEventos(eventosCarregados.sort((a, b) => b.criadoEm.getTime() - a.criadoEm.getTime()));
         } catch (error) {
             console.error('Erro ao carregar eventos:', error);
         } finally {
@@ -70,12 +100,45 @@ export default function Eventos() {
                     </p>
                 </motion.div>
 
+                {/* Barra de Pesquisa */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="max-w-xl mx-auto mb-12 relative"
+                >
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+                    <input
+                        type="text"
+                        placeholder="Pesquisar por título de evento..."
+                        value={busca}
+                        onChange={(e) => setBusca(e.target.value)}
+                        className="w-full bg-[#242424] text-white rounded-xl p-4 pl-12 focus:ring-2 focus:ring-[#eab308] border border-white/10 outline-none transition-all placeholder:text-zinc-500"
+                    />
+                </motion.div>
+
                 {/* Lista de eventos */}
                 {loading ? (
-                    <div className="flex justify-center py-20">
-                        <Loader2 className="w-12 h-12 text-[#eab308] animate-spin" />
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[1, 2, 3, 4, 5, 6].map(i => (
+                            <div key={i} className="bg-[#242424] rounded-2xl border border-white/10 overflow-hidden animate-pulse">
+                                <div className="aspect-[4/5] bg-zinc-800"></div>
+                                <div className="p-6 space-y-4">
+                                    <div className="h-6 bg-zinc-800 rounded w-3/4"></div>
+                                    <div className="h-4 bg-zinc-800 rounded w-1/3"></div>
+                                    <div className="h-4 bg-zinc-800 rounded w-1/4 mt-4"></div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                ) : eventos.length === 0 ? (
+                ) : (() => {
+                    const eventosFiltrados = eventos.filter(evento => 
+                        evento.titulo.toLowerCase().includes(busca.toLowerCase()) || 
+                        (evento.descricao && evento.descricao.toLowerCase().includes(busca.toLowerCase()))
+                    );
+
+                    if (eventosFiltrados.length === 0) {
+                        return (
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -91,16 +154,19 @@ export default function Eventos() {
                             </p>
                         </div>
                     </motion.div>
-                ) : (
+                        );
+                    }
+
+                    return (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {eventos.map((evento, index) => (
+                        {eventosFiltrados.map((evento, index) => (
                             <motion.button
                                 key={evento.id}
-                                onClick={() => setEventoSelecionado(evento)}
+                                onClick={() => navigate(`/evento/${evento.slug}`)}
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                                className="group relative bg-[#242424]/80 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 hover:border-[#eab308]/50 transition-all hover:shadow-2xl hover:shadow-[#eab308]/20 text-left w-full"
+                                className="group relative bg-[#242424]/80 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 hover:border-[#eab308]/50 transition-all hover:shadow-2xl hover:shadow-[#eab308]/20 text-left w-full cursor-pointer"
                             >
                                 <div className="aspect-[4/5] overflow-hidden bg-zinc-900 flex items-center justify-center">
                                     <img
@@ -113,9 +179,33 @@ export default function Eventos() {
                                     <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#eab308] transition-colors">
                                         {evento.titulo}
                                     </h3>
-                                    <div className="flex items-center gap-2 text-[#eab308] text-sm">
-                                        <ExternalLink className="w-4 h-4" />
-                                        <span>Ver detalhes</span>
+
+                                    {/* Vagas Disponíveis */}
+                                    {(evento.metaInscricoes ?? 0) > 0 && evento.inscricaoHabilitada !== false && (
+                                        <div className="mb-3">
+                                            {evento.totalInscricoes !== undefined && evento.totalInscricoes >= (evento.metaInscricoes ?? 0) ? (
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/10 text-red-400 text-xs font-semibold rounded-full border border-red-500/20">
+                                                    <Users className="w-3.5 h-3.5" />
+                                                    Esgotado
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#eab308]/10 text-[#eab308] text-xs font-semibold rounded-full border border-[#eab308]/20">
+                                                    <Users className="w-3.5 h-3.5" />
+                                                    {(evento.metaInscricoes ?? 0) - (evento.totalInscricoes || 0)} {(evento.metaInscricoes ?? 0) - (evento.totalInscricoes || 0) === 1 ? 'vaga' : 'vagas'}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center justify-between mt-4">
+                                        <div className="flex items-center gap-2 text-zinc-500 text-sm">
+                                            <Calendar className="w-4 h-4" />
+                                            <span>{evento.criadoEm.toLocaleDateString('pt-BR')}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-[#eab308] text-sm">
+                                            <ExternalLink className="w-4 h-4" />
+                                            <span>Ver detalhes</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="absolute top-4 right-4 bg-[#eab308] text-black px-3 py-1 rounded-full text-xs font-bold">
@@ -124,102 +214,9 @@ export default function Eventos() {
                             </motion.button>
                         ))}
                     </div>
-                )}
+                    );
+                })()}
             </div>
-
-            {/* Modal de Detalhes do Evento */}
-            <AnimatePresence>
-                {eventoSelecionado && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setEventoSelecionado(null)}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            onClick={(e) => e.stopPropagation()}
-                            className="relative bg-[#242424] rounded-2xl border border-white/10 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-                        >
-                            {/* Botão Fechar */}
-                            <button
-                                onClick={() => setEventoSelecionado(null)}
-                                className="sticky top-4 right-4 float-right p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors z-10"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-
-                            <div className="grid md:grid-cols-2 gap-6 p-6">
-                                {/* Imagem */}
-                                <div className="aspect-[4/5] bg-zinc-900 rounded-xl overflow-hidden flex items-center justify-center">
-                                    <img
-                                        src={eventoSelecionado.imagemUrl}
-                                        alt={eventoSelecionado.titulo}
-                                        className="w-full h-full object-contain"
-                                    />
-                                </div>
-
-                                {/* Conteúdo */}
-                                <div className="flex flex-col">
-                                    <h2 className="text-3xl font-black text-white mb-4">
-                                        {eventoSelecionado.titulo}
-                                    </h2>
-
-                                    {eventoSelecionado.descricao && (
-                                        <div className="mb-6">
-                                            <h3 className="text-sm font-semibold text-zinc-500 uppercase mb-2">
-                                                Descrição
-                                            </h3>
-                                            <p className="text-zinc-300 whitespace-pre-wrap leading-relaxed">
-                                                {eventoSelecionado.descricao}
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    {/* Botões personalizados */}
-                                    {eventoSelecionado.botoes && eventoSelecionado.botoes.length > 0 && (
-                                        <div className="mb-6">
-                                            <h3 className="text-sm font-semibold text-zinc-500 uppercase mb-3">
-                                                Links
-                                            </h3>
-                                            <div className="space-y-2">
-                                                {eventoSelecionado.botoes.map((botao, index) => (
-                                                    <a
-                                                        key={index}
-                                                        href={botao.link}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="flex items-center justify-between gap-3 bg-[#eab308] hover:bg-[#ca8a04] text-black px-5 py-3 rounded-xl font-bold transition-all active:scale-[0.98] shadow-lg shadow-yellow-500/20"
-                                                    >
-                                                        <span>{botao.texto}</span>
-                                                        <ExternalLink className="w-5 h-5" />
-                                                    </a>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Link principal */}
-                                    <div className="mt-auto">
-                                        <a
-                                            href={eventoSelecionado.link}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center justify-center gap-2 w-full bg-white/5 hover:bg-white/10 text-white px-5 py-3 rounded-xl font-semibold transition-all border border-white/10"
-                                        >
-                                            <ExternalLink className="w-4 h-4" />
-                                            <span>Ver mais informações</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </div>
     );
 }

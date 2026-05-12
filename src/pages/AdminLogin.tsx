@@ -20,7 +20,8 @@ export default function AdminLogin() {
         try {
             await signInWithEmailAndPassword(auth, email, password);
             navigate('/admin/dashboard');
-        } catch (err: any) {
+        } catch (error) {
+            const err = error as { code?: string; message?: string };
             console.error(err);
             if (err.code === 'auth/invalid-credential') {
                 setError('Email ou senha incorretos.');

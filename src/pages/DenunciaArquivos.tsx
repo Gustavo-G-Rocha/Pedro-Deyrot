@@ -796,8 +796,8 @@ export default function DenunciaArquivos() {
                                             </div>
                                         </div>
                                         <a
-                                            href="/documentos/dossie-wesley-safadao-completo.pdf"
-                                            download="Dossie_Grupo_WS_Wesley_Safadao.pdf"
+                                            href="https://drive.google.com/file/d/1K7nLdXgUAMpwyFdA2tIJKCWPgEPGhncu/view?usp=sharing"
+                                            target="_blank"
                                             className="inline-flex items-center gap-3 px-6 py-3 bg-[#eab308] hover:bg-[#ca8a04] text-black rounded-xl transition-all font-black text-sm uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
                                         >
                                             <Download className="w-5 h-5" />
