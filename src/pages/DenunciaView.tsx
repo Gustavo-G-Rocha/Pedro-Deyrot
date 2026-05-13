@@ -179,7 +179,7 @@ export default function DenunciaView() {
                 const encodedMsg = encodeURIComponent(customMsg);
 
                 // TODO: Substitua pelo número real da equipe
-                const numeroWhatsApp = "554188828924";
+                const numeroWhatsApp = "554188829438";
                 window.location.href = `https://wa.me/${numeroWhatsApp}?text=${encodedMsg}`;
             }, 3000); // 3 segundos para o usuário ler a mensagem antes de redirecionar
 
