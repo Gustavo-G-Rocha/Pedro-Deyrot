@@ -64,6 +64,39 @@ async function startServer() {
     }
   });
 
+  // Proxy API for PDF to bypass CORS
+  app.get("/api/proxy-pdf", async (req, res) => {
+    try {
+      let url = req.query.url as string;
+      if (!url) return res.status(400).send("Missing URL parameter");
+
+      // Handle Google Drive links automatically
+      if (url.includes('drive.google.com')) {
+          const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) {
+              url = `https://drive.google.com/uc?export=download&id=${match[1]}`;
+          }
+      }
+
+      console.log('🔄 [API] Proxying PDF:', url);
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        console.error("❌ [API] Failed to fetch PDF:", response.status, response.statusText);
+        return res.status(response.status).send("Failed to fetch PDF");
+      }
+      
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Content-Type", "application/pdf");
+      
+      const arrayBuffer = await response.arrayBuffer();
+      res.send(Buffer.from(arrayBuffer));
+    } catch (error) {
+      console.error("❌ [API] PDF Proxy error:", error);
+      res.status(500).send("Internal proxy error");
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
