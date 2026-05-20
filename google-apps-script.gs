@@ -40,18 +40,20 @@ function doPost(e) {
 // ============================================================
 function salvarVoluntario(data) {
   var sheet = getOrCreateSheet('Voluntários', [
-    'Data/Hora', 'Nome', 'WhatsApp', 'E-mail', 'CEP', 'Bairro', 'Cidade', 'Estado'
+    'Data/Hora', 'Nome', 'DDI', 'WhatsApp', 'E-mail', 'CEP', 'Bairro', 'Cidade', 'Estado', 'Especialidade'
   ]);
 
   sheet.appendRow([
     formatarData(data.timestamp),
-    data.nome        || '',
-    data.whatsapp    || '',
-    data.email       || '',
-    data.cep         || '',
-    data.bairro      || '',
-    data.cidade      || '',
-    data.estado      || ''
+    data.nome          || '',
+    data.ddi           || '+55',
+    data.whatsapp      || '',
+    data.email         || '',
+    data.cep           || '',
+    data.bairro        || '',
+    data.cidade        || '',
+    data.estado        || '',
+    data.especialidade || ''
   ]);
 }
 
