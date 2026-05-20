@@ -215,7 +215,7 @@ export default function DenunciaView() {
         }
 
         try {
-            const fullPhone = `${formData.ddi} ${formData.whatsapp}`;
+            const fullPhone = `${formData.ddi.replace('+', '')} ${formData.whatsapp}`;
 
             // Salvar lead na subcoleção da denúncia usando o slug como caminho
             const leadRef = await addDoc(collection(db, 'denuncias', slug!, 'leads'), {
