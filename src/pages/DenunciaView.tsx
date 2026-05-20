@@ -215,9 +215,12 @@ export default function DenunciaView() {
         }
 
         try {
+            const fullPhone = `${formData.ddi} ${formData.whatsapp}`;
+
             // Salvar lead na subcoleção da denúncia usando o slug como caminho
             const leadRef = await addDoc(collection(db, 'denuncias', slug!, 'leads'), {
                 ...formData,
+                whatsapp: fullPhone,
                 titulo: denuncia?.titulo || '',
                 slug: slug,
                 timestamp: serverTimestamp()
@@ -239,6 +242,7 @@ export default function DenunciaView() {
                     tituloDenuncia: denuncia?.titulo || '',
                     slug: slug,
                     ...formData,
+                    whatsapp: fullPhone,
                     timestamp: new Date().toISOString()
                 })
             }).catch((err) => { console.warn('⚠️ Erro ao enviar para Sheets:', err); });
