@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, deleteDoc, doc, Timestamp } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
-import { db, storage } from '../config/firebase';
+import { auth, db, storage } from '../config/firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import { Plus, Trash2, Edit2, Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, FileText, ArrowLeft, Lock, Unlock, Users } from 'lucide-react';
 
@@ -33,8 +33,15 @@ export default function AdminDenuncias() {
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     useEffect(() => {
-        carregarDenuncias();
-    }, []);
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (!user) {
+                navigate('/admin');
+            } else {
+                carregarDenuncias();
+            }
+        });
+        return () => unsubscribe();
+    }, [navigate]);
 
     // Filtrar denúncias vazias se necessário
     const denunciasFiltradas = mostrarVazios

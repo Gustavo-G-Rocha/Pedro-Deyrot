@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { collection, addDoc, doc, getDoc, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { db, storage } from '../config/firebase';
+import { auth, db, storage } from '../config/firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import {
     ArrowLeft, Save, Eye, EyeOff, FileText, Upload,
@@ -36,9 +36,14 @@ export default function AdminDenunciaEditor() {
     const [mostrarPrevia, setMostrarPrevia] = useState(false);
 
     useEffect(() => {
-        if (isEditMode) {
-            carregarDenuncia();
-        }
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (!user) {
+                navigate('/admin');
+            } else if (isEditMode) {
+                carregarDenuncia();
+            }
+        });
+        return () => unsubscribe();
     }, [id]);
 
     // Auto-gerar slug a partir do título

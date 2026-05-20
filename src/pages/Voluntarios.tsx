@@ -13,6 +13,7 @@ export default function Voluntarios() {
         bairro: '',
         estado: '',
         cidade: '',
+        especialidade: '',
         termos: false
     });
 
@@ -99,6 +100,7 @@ export default function Voluntarios() {
                     bairro: '',
                     estado: '',
                     cidade: '',
+                    especialidade: '',
                     termos: false
                 });
             } else {
@@ -270,6 +272,22 @@ export default function Voluntarios() {
                                 className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                             />
                         </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="especialidade">
+                            Especialidade
+                        </label>
+                        <input
+                            id="especialidade"
+                            type="text"
+                            name="especialidade"
+                            value={formData.especialidade}
+                            onChange={handleChange}
+                            placeholder="Ex: Divulgação, Edição, Panfletagem"
+                            className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+                        />
+                        <p className="text-xs text-zinc-500 mt-1 ml-1">Separe as especialidades por vírgula.</p>
                     </div>
 
                     <div>

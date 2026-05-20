@@ -5,8 +5,6 @@ import { db } from '../config/firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import { Download, AlertCircle, Loader2, ArrowLeft, Eye, Users, CheckCircle2, Lock, Share2, FileWarning, ZoomIn, ZoomOut } from 'lucide-react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -199,6 +197,7 @@ export default function DenunciaView() {
             setTimeout(() => {
                 redirectWhatsApp();
             }, 3000);
+
 
         } catch (error) {
             console.error('Erro ao baixar PDF:', error);
