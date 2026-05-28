@@ -1,6 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Home, Users, Calendar, FileText, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { Home, Users, Calendar, FileText, ScrollText } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function Layout() {
@@ -12,6 +11,7 @@ export default function Layout() {
         { path: '/', label: 'Home', icon: Home },
         { path: '/voluntarios', label: 'Voluntários', icon: Users },
         { path: '/eventos', label: 'Eventos', icon: Calendar },
+        { path: '/abaixo-assinado', label: 'Abaixo-assinado', icon: ScrollText },
         { path: '/denuncias', label: 'Denúncias', icon: FileText },
     ];
 
@@ -57,9 +57,8 @@ export default function Layout() {
                             <Link
                                 key={link.path}
                                 to={link.path}
-                                className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${
-                                    active ? 'text-[#eab308]' : 'text-zinc-500 hover:text-zinc-300'
-                                }`}
+                                className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${active ? 'text-[#eab308]' : 'text-zinc-500 hover:text-zinc-300'
+                                    }`}
                             >
                                 <Icon className={`w-5 h-5 ${active ? 'fill-[#eab308]/20' : ''}`} />
                                 <span className="text-[10px] font-bold tracking-wider uppercase">

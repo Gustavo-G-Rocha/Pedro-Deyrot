@@ -50,6 +50,15 @@ service cloud.firestore {
       // Apenas usuários autenticados podem criar, atualizar ou deletar
       allow create, update, delete: if isAuthenticated();
     }
+
+    // Collection 'abaixo_assinado_assinaturas' - Assinaturas do abaixo-assinado
+    match /abaixo_assinado_assinaturas/{assinaturaId} {
+      // Permitir criação pública (formulário aberto)
+      allow create: if true;
+
+      // Leitura e alterações apenas para usuários autenticados (admin)
+      allow read, update, delete: if isAuthenticated();
+    }
     
     // Collection 'eventos' - Eventos cadastrados
     match /eventos/{eventoId} {

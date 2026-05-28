@@ -12,6 +12,7 @@ import DenunciasLista from './pages/DenunciasLista';
 import DenunciaView from './pages/DenunciaView';
 import EventoView from './pages/EventoView';
 import LGPD from './pages/LGPD';
+import AbaixoAssinado from './pages/AbaixoAssinado.tsx';
 
 export default function App() {
   return (
@@ -36,6 +37,9 @@ export default function App() {
 
         {/* Página de Termos LGPD */}
         <Route path="/LGPD" element={<LGPD />} />
+
+        {/* Página de abaixo-assinado */}
+        <Route path="/abaixo-assinado" element={<AbaixoAssinado />} />
 
         {/* Rotas administrativas (sem Layout) */}
         <Route path="/admin" element={<AdminLogin />} />

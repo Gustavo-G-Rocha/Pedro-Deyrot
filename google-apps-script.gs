@@ -19,6 +19,8 @@ function doPost(e) {
       salvarEvento(data);
     } else if (tipo === 'denuncia_formulario') {
       salvarDenuncia(data);
+    } else if (tipo === 'abaixo_assinado') {
+      salvarAbaixoAssinado(data);
     } else {
       salvarOutros(data);
     }
@@ -95,6 +97,27 @@ function salvarDenuncia(data) {
     data.cidade          || '',
     data.tituloDenuncia  || '',
     data.slug            || ''
+  ]);
+}
+
+// ============================================================
+// ABAIXO-ASSINADO -> aba fixa "Abaixo-Assinado"
+// ============================================================
+function salvarAbaixoAssinado(data) {
+  var sheet = getOrCreateSheet('Abaixo-Assinado', [
+    'Data/Hora', 'Nome', 'DDI', 'WhatsApp', 'E-mail', 'Cidade', 'Estado', 'Estado Selecionado', 'Exterior Personalizado'
+  ]);
+
+  sheet.appendRow([
+    formatarData(data.timestamp),
+    data.nome                  || '',
+    data.ddi                   || '+55',
+    data.whatsapp              || '',
+    data.email                 || '',
+    data.cidade                || '',
+    data.estado                || '',
+    data.estadoSelecionado     || '',
+    data.estadoExteriorCustom  || ''
   ]);
 }
 
