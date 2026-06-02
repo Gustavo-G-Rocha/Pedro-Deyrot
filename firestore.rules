@@ -56,8 +56,11 @@ service cloud.firestore {
       // Permitir criação pública (formulário aberto)
       allow create: if true;
 
-      // Leitura e alterações apenas para usuários autenticados (admin)
-      allow read, update, delete: if isAuthenticated();
+      // Permitir leitura pública para contagem e validação de duplicidade no formulário
+      allow read: if true;
+
+      // Alterações apenas para usuários autenticados (admin)
+      allow update, delete: if isAuthenticated();
     }
     
     // Collection 'eventos' - Eventos cadastrados
