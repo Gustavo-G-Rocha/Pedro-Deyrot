@@ -13,14 +13,33 @@ if (!connectionString) {
   );
 }
 
-// O Postgres do Railway usa certificado self-signed no proxy publico.
-const isLocal = /localhost|127\.0\.0\.1/.test(connectionString);
+/**
+ * Quando usar SSL:
+ *  - rede interna do Railway (*.railway.internal) e localhost NAO falam TLS;
+ *    forcar SSL ali derruba a conexao com "server does not support SSL".
+ *  - o proxy publico (*.proxy.rlwy.net) exige SSL e usa cert self-signed,
+ *    por isso o rejectUnauthorized: false.
+ * sslmode na propria URL tem a ultima palavra.
+ */
+function configurarSsl(url: string): false | { rejectUnauthorized: boolean } {
+  const sslmode = url.match(/[?&]sslmode=([^&]+)/)?.[1];
+  if (sslmode === "disable") return false;
+  if (sslmode) return { rejectUnauthorized: false };
+
+  const semTls = /localhost|127\.0\.0\.1|\.railway\.internal/.test(url);
+  return semTls ? false : { rejectUnauthorized: false };
+}
 
 export const pool = new Pool({
   connectionString,
-  ssl: isLocal ? false : { rejectUnauthorized: false },
+  ssl: configurarSsl(connectionString),
   max: 10,
+  // Sem isso o pg espera indefinidamente e o boot pendura sem dizer o motivo.
+  connectionTimeoutMillis: 10_000,
 });
+
+const host = connectionString.match(/@([^/:]+)/)?.[1] ?? "?";
+console.log(`🔌 [DB] host=${host} ssl=${configurarSsl(connectionString) ? "on" : "off"}`);
 
 export async function query<T extends pg.QueryResultRow = pg.QueryResultRow>(
   text: string,

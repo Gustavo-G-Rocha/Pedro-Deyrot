@@ -19,6 +19,8 @@ const { default: voluntariosRouter } = await import("./server/routes/voluntarios
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+let estadoMigracao: "pendente" | "ok" | "falhou" = "pendente";
+
 async function startServer() {
   const app = express();
   // O Railway define a PORT; 3000 é o fallback local.
@@ -30,8 +32,9 @@ async function startServer() {
   // Limite generoso: o editor de denúncias manda descrições longas.
   app.use(express.json({ limit: "2mb" }));
 
-  // Aplica db/schema.sql e garante o admin inicial
-  await runMigrations();
+  // As migrations rodam DEPOIS do listen (no fim desta função). Bloquear o
+  // boot nelas fazia o healthcheck bater em porta fechada e o Railway só
+  // dizer "never became healthy", escondendo o erro real do banco.
 
   // ---------------------------------------------------------------------
   // API (Postgres)
@@ -43,13 +46,16 @@ async function startServer() {
   app.use("/api/campanhas", campanhasRouter);
   app.use("/api/voluntarios", voluntariosRouter);
 
+  // Liveness check: responde 200 enquanto o processo estiver de pé, e conta
+  // no corpo como esta o banco. Assim um deploy com banco quebrado sobe e da
+  // pra ler o erro, em vez de morrer calado.
   app.get("/api/health", async (_req, res) => {
     const { query } = await import("./server/db.js");
     try {
       await query("SELECT 1");
-      res.json({ ok: true, db: "up" });
+      res.json({ ok: true, db: "up", migracao: estadoMigracao });
     } catch (e) {
-      res.status(503).json({ ok: false, db: "down", error: (e as Error).message });
+      res.json({ ok: false, db: "down", erro: (e as Error).message });
     }
   });
 
@@ -177,6 +183,20 @@ async function startServer() {
     console.log(`\n🚀 Servidor rodando localmente: http://localhost:${PORT}`);
     console.log(`📱 Servidor rodando na rede: http://${getNetworkIp()}:${PORT}\n`);
   });
+
+  // Aplica db/schema.sql e garante o admin inicial. Um erro aqui é logado e
+  // exposto em /api/health, mas não derruba o processo: sem isso o Railway
+  // reinicia em loop e o motivo real nunca aparece.
+  try {
+    await runMigrations();
+    estadoMigracao = "ok";
+  } catch (e) {
+    estadoMigracao = "falhou";
+    console.error("\n❌ [DB] Não foi possível preparar o banco:", (e as Error).message);
+    console.error("   Confira DATABASE_URL nas variáveis do serviço do site.");
+    console.error("   No Railway ela deve ser a referência ${{Postgres.DATABASE_URL}},");
+    console.error("   digitada com as chaves duplas — não a URL colada à mão.\n");
+  }
 }
 
 startServer();
