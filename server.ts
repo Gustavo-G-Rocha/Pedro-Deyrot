@@ -146,7 +146,7 @@ async function startServer() {
   // Erros dos handlers async (inclusive o limite de tamanho do multer)
   app.use((err: Error & { code?: string }, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
     if (err.code === "LIMIT_FILE_SIZE") {
-      return res.status(413).json({ error: "Arquivo muito grande (máx. 25 MB)" });
+      return res.status(413).json({ error: "Arquivo muito grande (máx. 50 MB)" });
     }
     console.error("❌ [API] Erro não tratado:", err);
     res.status(500).json({ error: "Erro interno do servidor" });

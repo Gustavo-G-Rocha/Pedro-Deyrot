@@ -52,7 +52,7 @@ const { rows } = await query(
 const url = `/api/arquivos/${rows[0].id}`;   // é isso que vai em pdf_url / imagem_url
 ```
 
-Limite de 25 MB por arquivo.
+Limite de 50 MB por arquivo.
 
 ## O schema completo
 

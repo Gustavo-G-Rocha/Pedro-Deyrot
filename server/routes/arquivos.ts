@@ -5,8 +5,9 @@ import { exigirAdmin } from "../auth.js";
 
 const router = Router();
 
-// 25 MB - os arquivos vao em bytea, entao vale manter um teto conservador.
-export const LIMITE_ARQUIVO_BYTES = 25 * 1024 * 1024;
+// 50 MB. O maior dossie migrado tem 26 MB, entao um teto de 25 MB rejeitaria
+// justamente um arquivo que ja existe no site.
+export const LIMITE_ARQUIVO_BYTES = 50 * 1024 * 1024;
 
 const upload = multer({
   storage: multer.memoryStorage(),

@@ -106,6 +106,19 @@ O script cria as tabelas, copia todas as coleções do Firestore preservando os 
 originais, e **baixa cada PDF/imagem do Firebase Storage direto pra tabela `arquivos`**,
 reescrevendo as URLs. Ele é idempotente: rodar duas vezes não duplica nada.
 
+### Só as denúncias, sem a chave do Firebase
+
+Se você quer apenas os dossiês (e não os leads), há um caminho mais curto que não
+precisa da service account:
+
+```bash
+npm run importar-denuncias
+```
+
+Ele lê pela API REST pública do Firestore e baixa os PDFs pelas URLs assinadas que já
+estão nos documentos. Traz as 10 denúncias com PDF, capa e estatísticas preservadas.
+Os leads não vêm por aqui — as regras do Firestore exigem login para lê-los.
+
 **e)** Confira o resultado:
 
 ```bash
@@ -141,7 +154,7 @@ endpoint, então um deploy só é promovido depois que o banco responde.
 Os PDFs e imagens ficam **dentro do Postgres**, como você pediu (tudo no Railway, sem
 bucket externo). Funciona bem nessa escala, mas vale saber:
 
-- Há um teto de **25 MB por arquivo** ([server/routes/arquivos.ts](server/routes/arquivos.ts)).
+- Há um teto de **50 MB por arquivo** ([server/routes/arquivos.ts](server/routes/arquivos.ts)).
 - Os arquivos entram nos backups do banco, que ficam proporcionalmente maiores.
 - Não há CDN: cada download passa pelo servidor Node. As respostas vão com
   `Cache-Control: immutable`, então o navegador só baixa uma vez.
