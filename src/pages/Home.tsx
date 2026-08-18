@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowRight, Users, Calendar, ChevronDown } from 'lucide-react';
+import { ArrowRight, Users, Calendar, ChevronDown, MessageCircle, Package } from 'lucide-react';
+import { WHATSAPP_GRUPO, materialHref } from '../config/links';
 
 export default function Home() {
     return (
@@ -9,7 +10,7 @@ export default function Home() {
             <div
                 className="absolute inset-0 z-0 bg-contain bg-top bg-no-repeat hidden md:block"
                 style={{
-                    backgroundImage: `url('/fundohome.png')`,
+                    backgroundImage: `url('/fundohome-2026.png')`,
                     backgroundSize: '100% auto'
                 }}
             />
@@ -18,7 +19,7 @@ export default function Home() {
             <div
                 className="absolute inset-0 z-0 bg-contain bg-top bg-no-repeat md:hidden"
                 style={{
-                    backgroundImage: `url('/fundomobile.png')`,
+                    backgroundImage: `url('/fundomobile-2026.png')`,
                     backgroundSize: '100% auto'
                 }}
             />
@@ -117,6 +118,37 @@ export default function Home() {
                         </Link>
                     </motion.div>
                 </div>
+
+                {/* Botões de ação rápida */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.8, delay: 0.1 }}
+                    className="mt-8 max-w-4xl mx-auto grid sm:grid-cols-2 gap-4"
+                >
+                    <a
+                        href={WHATSAPP_GRUPO}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-5 text-black font-bold text-lg transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-[#25D366]/25"
+                    >
+                        <MessageCircle className="w-6 h-6" />
+                        Entrar no grupo do WhatsApp
+                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    </a>
+
+                    <a
+                        href={materialHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-center gap-3 rounded-2xl bg-[#eab308] px-6 py-5 text-black font-bold text-lg transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-[#eab308]/25"
+                    >
+                        <Package className="w-6 h-6" />
+                        Pedir material
+                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    </a>
+                </motion.div>
 
                 {/* Chamada secundária */}
                 <motion.div

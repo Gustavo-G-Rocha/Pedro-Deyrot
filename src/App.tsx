@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Voluntarios from './pages/Voluntarios';
 import Eventos from './pages/Eventos';
+import Propostas from './pages/Propostas';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDenuncias from './pages/AdminDenuncias';
@@ -21,6 +22,7 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="voluntarios" element={<Voluntarios />} />
           <Route path="eventos" element={<Eventos />} />
+          <Route path="propostas" element={<Propostas />} />
           <Route path="denuncias" element={<DenunciasLista />} />
         </Route>
 

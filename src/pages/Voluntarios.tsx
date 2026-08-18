@@ -205,13 +205,24 @@ export default function Voluntarios() {
 
     return (
         <div className="relative min-h-screen flex items-center justify-center lg:justify-end p-4 lg:pr-8 overflow-hidden">
-            {/* Background */}
+            {/* Background - Desktop (dupla à esquerda, formulário à direita) */}
             <div
-                className="absolute inset-0 z-0 bg-cover bg-center"
+                className="absolute inset-0 z-0 bg-cover bg-center hidden md:block"
                 style={{
-                    backgroundImage: `url('/fundo.png')`
+                    backgroundImage: `url('/voluntario-fundo.png')`
                 }}
             />
+
+            {/* Background - Mobile (recorta pela esquerda para manter a dupla no quadro) */}
+            <div
+                className="absolute inset-0 z-0 bg-cover bg-left md:hidden"
+                style={{
+                    backgroundImage: `url('/voluntario-fundo.png')`
+                }}
+            />
+
+            {/* Escurecimento para o formulário ficar legível sobre a foto */}
+            <div className="absolute inset-0 z-0 bg-black/50" />
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -219,7 +230,16 @@ export default function Voluntarios() {
                 className="relative z-10 w-full max-w-lg bg-[#242424]/70 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
             >
                 <header className="mb-8 text-center">
-                    <img src="/logo-header.png" alt="Pedro Deyrot - Pré Candidato a Deputado Federal" className="w-full max-w-md mx-auto mb-4 lg:hidden" />
+                    {/* Lockup 1414 (PNG transparente: recortamos a area vazia do topo) */}
+                    <div
+                        role="img"
+                        aria-label="Pedro Deyrot 1414 - Deputado Federal"
+                        className="lg:hidden w-full max-w-[16rem] mx-auto mb-4 aspect-[1408/510] bg-no-repeat bg-bottom"
+                        style={{
+                            backgroundImage: `url('/voluntario-lockup.png')`,
+                            backgroundSize: '100% auto'
+                        }}
+                    />
                     <p className="text-zinc-400 text-sm font-medium">Junte-se à mudança. Seja um voluntário.</p>
                 </header>
 

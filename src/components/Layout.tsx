@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Home, Users, Calendar, FileText, ScrollText } from 'lucide-react';
+import { Home, Users, Calendar, FileText, ClipboardList } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function Layout() {
@@ -11,7 +11,7 @@ export default function Layout() {
         { path: '/', label: 'Home', icon: Home },
         { path: '/voluntarios', label: 'Voluntários', icon: Users },
         { path: '/eventos', label: 'Eventos', icon: Calendar },
-        { path: '/abaixo-assinado', label: 'Abaixo-assinado', icon: ScrollText },
+        { path: '/propostas', label: 'Propostas', icon: ClipboardList },
         { path: '/denuncias', label: 'Denúncias', icon: FileText },
     ];
 
