@@ -1,9 +1,0 @@
-name = "pedrodeyrot"
-compatibility_date = "2026-05-06"
-
-[assets]
-directory = "./dist"
-
-# Variáveis de ambiente (configure no Cloudflare Dashboard)
-# [vars]
-# GOOGLE_SHEETS_WEBHOOK_URL = "sua_url_aqui"

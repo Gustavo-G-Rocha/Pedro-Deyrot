@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { denuncias as denunciasApi } from '../lib/api';
 import { motion } from 'motion/react';
 import { FileText, Eye, Loader2, AlertCircle, Search, Calendar } from 'lucide-react';
 
@@ -16,9 +15,7 @@ interface Denuncia {
         visualizacoes: number;
         downloads: number;
     };
-    criadoEm?: {
-        toDate: () => Date;
-    };
+    criadoEm?: Date;
 }
 
 export default function DenunciasLista() {
@@ -32,34 +29,19 @@ export default function DenunciasLista() {
 
     const carregarDenuncias = async () => {
         try {
-            const denunciasRef = collection(db, 'denuncias');
-            const q = query(denunciasRef, where('status', '==', 'publicado'));
-            const querySnapshot = await getDocs(q);
+            // A API ja filtra por status e ordena por data decrescente.
+            const dados = await denunciasApi.listar('publicado');
 
-            const denunciasData: Denuncia[] = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                denunciasData.push({
-                    id: doc.id,
-                    titulo: data.titulo,
-                    slug: data.slug,
-                    descricao: data.descricao,
-                    status: data.status,
-                    imagemUrl: data.imagemUrl || '',
-                    estatisticas: data.estatisticas || { visualizacoes: 0, downloads: 0 },
-                    criadoEm: data.criadoEm
-                });
-            });
-
-            // Ordenar por data decrescente
-            denunciasData.sort((a, b) => {
-                if (a.criadoEm && b.criadoEm) {
-                    return b.criadoEm.toDate().getTime() - a.criadoEm.toDate().getTime();
-                }
-                return 0;
-            });
-
-            setDenuncias(denunciasData);
+            setDenuncias(dados.map((d) => ({
+                id: d.id,
+                titulo: d.titulo,
+                slug: d.slug,
+                descricao: d.descricao,
+                status: d.status,
+                imagemUrl: d.imagem_url || '',
+                estatisticas: d.estatisticas,
+                criadoEm: new Date(d.criado_em)
+            })));
         } catch (error) {
             console.error('Erro ao carregar denúncias:', error);
         } finally {
@@ -190,7 +172,7 @@ export default function DenunciasLista() {
                                         <div className="flex items-center justify-between pt-4 border-t border-white/5 pb-4 mb-2">
                                             <div className="flex items-center gap-2 text-zinc-500 text-sm">
                                                 <Calendar className="w-4 h-4" />
-                                                <span>{denuncia.criadoEm ? denuncia.criadoEm.toDate().toLocaleDateString('pt-BR') : 'Data não informada'}</span>
+                                                <span>{denuncia.criadoEm ? denuncia.criadoEm.toLocaleDateString('pt-BR') : 'Data não informada'}</span>
                                             </div>
                                         </div>
 

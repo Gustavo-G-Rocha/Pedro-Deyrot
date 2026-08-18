@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signOut } from 'firebase/auth';
-import { collection, addDoc, deleteDoc, doc, getDocs, updateDoc, Timestamp, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { auth, db, storage } from '../config/firebase';
+import { auth, arquivos, eventos as eventosApi } from '../lib/api';
 import { motion, AnimatePresence } from 'motion/react';
 import { LogOut, Plus, Trash2, ExternalLink, Loader2, AlertCircle, CheckCircle2, Image as ImageIcon, Edit2, X, Calendar, FileText, Users } from 'lucide-react';
 
@@ -54,16 +51,14 @@ export default function AdminDashboard() {
     const [linkFormularioExterno, setLinkFormularioExterno] = useState<string>('');
 
     useEffect(() => {
-        // Verificar autenticação
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (!user) {
+        // Verificar autenticação contra o servidor antes de carregar qualquer coisa
+        auth.me().then((admin) => {
+            if (!admin) {
                 navigate('/admin');
             } else {
                 carregarEventos();
             }
         });
-
-        return () => unsubscribe();
     }, [navigate]);
 
     // Auto-gerar slug a partir do título
@@ -83,25 +78,20 @@ export default function AdminDashboard() {
 
     const carregarEventos = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, 'eventos'));
-            const eventosData: Evento[] = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                eventosData.push({
-                    id: doc.id,
-                    titulo: data.titulo,
-                    imagemUrl: data.imagemUrl,
-                    link: data.link,
-                    descricao: data.descricao || '',
-                    botoes: data.botoes || [],
-                    criadoEm: data.criadoEm?.toDate() || new Date(),
-                    metaInscricoes: data.metaInscricoes || 0,
-                    inscricaoHabilitada: data.inscricaoHabilitada !== false,
-                    linkFormularioExterno: data.linkFormularioExterno || '',
-                    slug: data.slug || doc.id
-                });
-            });
-            setEventos(eventosData.sort((a, b) => b.criadoEm.getTime() - a.criadoEm.getTime()));
+            const dados = await eventosApi.listar();
+            setEventos(dados.map((e) => ({
+                id: e.id,
+                titulo: e.titulo,
+                imagemUrl: e.imagem_url,
+                link: e.link,
+                descricao: e.descricao || '',
+                botoes: e.botoes || [],
+                criadoEm: new Date(e.criado_em),
+                metaInscricoes: e.meta_inscricoes || 0,
+                inscricaoHabilitada: e.inscricao_habilitada !== false,
+                linkFormularioExterno: e.link_formulario_externo || '',
+                slug: e.slug || e.id
+            })));
         } catch (error) {
             console.error('Erro ao carregar eventos:', error);
             showMessage('error', 'Erro ao carregar eventos');
@@ -138,57 +128,32 @@ export default function AdminDashboard() {
         setSaving(true);
 
         try {
-            let imagemUrl = imagemPreview;
+            const eventoAntigo = editandoId ? eventos.find(e => e.id === editandoId) : undefined;
+            let imagemUrl = eventoAntigo?.imagemUrl ?? '';
 
-            // Se houver nova imagem, fazer upload
+            // Se houver nova imagem, subir e descartar a antiga
             if (imagem) {
-                const imageRef = ref(storage, `eventos/${Date.now()}_${imagem.name}`);
-                await uploadBytes(imageRef, imagem);
-                imagemUrl = await getDownloadURL(imageRef);
+                imagemUrl = await arquivos.upload(imagem);
+                await arquivos.remover(eventoAntigo?.imagemUrl);
             }
 
+            const dados = {
+                titulo,
+                slug: slug || null,
+                imagemUrl,
+                link,
+                descricao,
+                botoes,
+                metaInscricoes: metaInscricoes || 0,
+                inscricaoHabilitada,
+                linkFormularioExterno
+            };
+
             if (editandoId) {
-                // Atualizar evento existente
-                const eventoRef = doc(db, 'eventos', editandoId);
-                const updateData: Record<string, unknown> = {
-                    titulo,
-                    slug,
-                    link,
-                    descricao,
-                    botoes,
-                    metaInscricoes: metaInscricoes || 0,
-                    inscricaoHabilitada,
-                    linkFormularioExterno
-                };
-
-                // Só atualizar imagem se foi alterada
-                if (imagem && imagemUrl) {
-                    // Deletar imagem antiga se houver
-                    const eventoAntigo = eventos.find(e => e.id === editandoId);
-                    if (eventoAntigo?.imagemUrl) {
-                        const oldImageRef = ref(storage, eventoAntigo.imagemUrl);
-                        await deleteObject(oldImageRef).catch(() => { });
-                    }
-                    updateData.imagemUrl = imagemUrl;
-                }
-
-                await updateDoc(eventoRef, updateData);
+                await eventosApi.atualizar(editandoId, dados);
                 showMessage('success', 'Evento atualizado com sucesso!');
             } else {
-                // Adicionar novo evento
-                const finalSlug = slug || Date.now().toString();
-                await setDoc(doc(db, 'eventos', finalSlug), {
-                    titulo,
-                    slug: finalSlug,
-                    imagemUrl,
-                    link,
-                    descricao,
-                    botoes,
-                    metaInscricoes: metaInscricoes || 0,
-                    inscricaoHabilitada,
-                    linkFormularioExterno,
-                    criadoEm: Timestamp.now()
-                });
+                await eventosApi.criar(dados);
                 showMessage('success', 'Evento adicionado com sucesso!');
             }
 
@@ -242,14 +207,9 @@ export default function AdminDashboard() {
         if (!confirm(`Tem certeza que deseja deletar "${evento.titulo}"?`)) return;
 
         try {
-            // Deletar imagem do Storage
-            const imageRef = ref(storage, evento.imagemUrl);
-            await deleteObject(imageRef).catch(() => {
-                // Ignorar erro se imagem já foi deletada
-            });
-
-            // Deletar documento do Firestore
-            await deleteDoc(doc(db, 'eventos', evento.id));
+            // As inscrições caem junto com o evento (ON DELETE CASCADE)
+            await eventosApi.remover(evento.id);
+            await arquivos.remover(evento.imagemUrl);
 
             showMessage('success', 'Evento deletado com sucesso!');
             carregarEventos();
@@ -260,12 +220,8 @@ export default function AdminDashboard() {
     };
 
     const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            navigate('/admin');
-        } catch (error) {
-            console.error('Erro ao sair:', error);
-        }
+        auth.logout();
+        navigate('/admin');
     };
 
     if (loading) {

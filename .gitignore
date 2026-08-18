@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Chave privada do Firebase usada pelo script de migracao
+firebase-service-account.json

@@ -1,20 +1,51 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Pedro Deyrot
 
-# Run and deploy your AI Studio app
+Site institucional com área administrativa: eventos com inscrição, dossiês de denúncias
+com PDF, campanhas e cadastro de voluntários.
 
-This contains everything you need to run your app locally.
+**Stack:** React 19 + Vite + Tailwind no front, Express + Postgres no back, deploy no Railway.
 
-View your app in AI Studio: https://ai.studio/apps/85dde584-e695-4529-9760-a208c7fe8c12
+## Rodando local
 
-## Run Locally
+**Pré-requisitos:** Node.js 20+ e um Postgres acessível.
 
-**Prerequisites:**  Node.js
+```bash
+npm install
+cp .env.example .env     # preencha DATABASE_URL e JWT_SECRET
+npm run dev              # http://localhost:3000
+```
 
+O schema (`db/schema.sql`) é aplicado automaticamente no boot — não há passo manual
+de migration.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Scripts
+
+| Comando | O que faz |
+|---|---|
+| `npm run dev` | servidor de desenvolvimento (Express + Vite em middleware mode) |
+| `npm run build` | build de produção do front em `dist/` |
+| `npm start` | sobe em produção (serve `dist/` + API) |
+| `npm run lint` | checagem de tipos (`tsc --noEmit`) |
+| `npm run migrar` | copia os dados do Firebase para o Postgres (uma vez só) |
+| `npm run db:check` | mostra a contagem de cada tabela |
+
+## Estrutura
+
+```
+db/schema.sql          schema do Postgres
+server/
+  db.ts                pool de conexão + aplicação do schema no boot
+  auth.ts              JWT e o middleware exigirAdmin
+  routes/              endpoints REST (auth, arquivos, eventos, denuncias, campanhas, voluntarios)
+scripts/
+  migrar-firestore.ts  migração Firebase -> Postgres
+src/
+  lib/api.ts           cliente REST usado por todas as páginas
+  pages/               telas públicas e administrativas
+server.ts              monta a API e serve o front
+```
+
+## Deploy
+
+Veja [RAILWAY.md](RAILWAY.md) — inclui as variáveis de ambiente, como ligar o Postgres
+ao serviço do site e o passo a passo da migração dos dados.
