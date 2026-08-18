@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
-import { db } from '../config/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { voluntarios as voluntariosApi } from '../lib/api';
 
 export default function Voluntarios() {
     const ddiOptions = [
@@ -149,16 +148,11 @@ export default function Voluntarios() {
         setTermosError(false);
         setStatus('loading');
         try {
-            // Salvar no Firebase
+            // Salvar no banco
             try {
-                await addDoc(collection(db, 'voluntarios'), {
-                    ...formData,
-                    tipo: 'voluntario',
-                    timestamp: serverTimestamp(),
-                    createdAt: new Date().toISOString()
-                });
-            } catch (fbError) {
-                console.error("Erro ao salvar no Firebase:", fbError);
+                await voluntariosApi.criar(formData);
+            } catch (dbError) {
+                console.error("Erro ao salvar no banco:", dbError);
                 // Não interrompe o fluxo para tentar enviar pro Google Sheets
             }
 

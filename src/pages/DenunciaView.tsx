@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { doc, updateDoc, increment, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { denuncias as denunciasApi } from '../lib/api';
 import { motion, AnimatePresence } from 'motion/react';
 import { Download, AlertCircle, Loader2, ArrowLeft, Eye, Users, CheckCircle2, Lock, Share2, FileWarning, ZoomIn, ZoomOut } from 'lucide-react';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -148,19 +147,7 @@ export default function DenunciaView() {
         }
 
         try {
-            // Buscar denúncia por slug
-            const { collection, query, where, getDocs } = await import('firebase/firestore');
-            const denunciasRef = collection(db, 'denuncias');
-            const q = query(denunciasRef, where('slug', '==', slug));
-            const querySnapshot = await getDocs(q);
-
-            if (querySnapshot.empty) {
-                navigate('/denuncias');
-                return;
-            }
-
-            const docSnap = querySnapshot.docs[0];
-            const data = docSnap.data() as Denuncia;
+            const data = await denunciasApi.buscar(slug);
 
             // Verificar se está publicada
             if (data.status !== 'publicado') {
@@ -168,19 +155,27 @@ export default function DenunciaView() {
                 return;
             }
 
-            setDenunciaId(docSnap.id);
-            setDenuncia(data);
+            setDenunciaId(data.id);
+            setDenuncia({
+                titulo: data.titulo,
+                slug: data.slug,
+                descricao: data.descricao,
+                pdfUrl: data.pdf_url,
+                imagemUrl: data.imagem_url,
+                status: data.status,
+                formularioAtivo: data.formulario_ativo,
+                mensagemWhatsapp: data.mensagem_whatsapp,
+                estatisticas: data.estatisticas
+            });
 
             // Verificar acesso ao formulário
             const jaAcessou = sessionStorage.getItem(`denuncia_form_${slug}`) === 'true';
-            if (data.formularioAtivo && !jaAcessou) {
+            if (data.formulario_ativo && !jaAcessou) {
                 setTemAcesso(false);
             } else {
                 setTemAcesso(true);
                 // Incrementar visualizações somente quando acessa o conteúdo
-                await updateDoc(doc(db, 'denuncias', docSnap.id), {
-                    'estatisticas.visualizacoes': increment(1)
-                });
+                denunciasApi.registrarEstatistica(slug, { visualizacoes: 1 });
             }
 
         } catch (error) {
@@ -217,19 +212,11 @@ export default function DenunciaView() {
         try {
             const fullPhone = `${formData.ddi.replace('+', '')} ${formData.whatsapp}`;
 
-            // Salvar lead na subcoleção da denúncia usando o slug como caminho
-            const leadRef = await addDoc(collection(db, 'denuncias', slug!, 'leads'), {
+            // Salvar lead vinculado à denúncia. A API já incrementa
+            // formularioEnvios e visualizacoes na mesma requisição.
+            await denunciasApi.enviarLead(slug!, {
                 ...formData,
-                whatsapp: fullPhone,
-                titulo: denuncia?.titulo || '',
-                slug: slug,
-                timestamp: serverTimestamp()
-            });
-
-            // Incrementar contador de envios
-            await updateDoc(doc(db, 'denuncias', denunciaId), {
-                'estatisticas.formularioEnvios': increment(1),
-                'estatisticas.visualizacoes': increment(1)
+                whatsapp: fullPhone
             });
 
             // Enviar para Google Sheets via webhook
@@ -266,9 +253,7 @@ export default function DenunciaView() {
 
         try {
             // Incrementar downloads
-            await updateDoc(doc(db, 'denuncias', denunciaId), {
-                'estatisticas.downloads': increment(1)
-            });
+            denunciasApi.registrarEstatistica(slug!, { downloads: 1 });
 
             // Abrir PDF em nova aba (inicia o download)
             window.open(denuncia.pdfUrl, '_blank');
@@ -672,7 +657,7 @@ export default function DenunciaView() {
                                             Não foi possível carregar o visualizador nativo devido às configurações do arquivo.
                                         </p>
                                         <iframe
-                                            src={`https://docs.google.com/viewer?url=${encodeURIComponent(denuncia.pdfUrl)}&embedded=true`}
+                                            src={`https://docs.google.com/viewer?url=${encodeURIComponent(new URL(denuncia.pdfUrl, window.location.origin).href)}&embedded=true`}
                                             className="w-full rounded-xl border border-white/10"
                                             style={{ height: '70vh', minHeight: '500px' }}
                                             title={denuncia.titulo}

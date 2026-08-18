@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { doc, getDoc, addDoc, collection, Timestamp, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { eventos as eventosApi } from '../lib/api';
 import { motion } from 'motion/react';
 import { Calendar, ExternalLink, Loader2, ArrowLeft, CheckCircle2, AlertCircle, Users, Share2 } from 'lucide-react';
 
@@ -31,7 +30,6 @@ export default function EventoView() {
     const [loading, setLoading] = useState(true);
     const [eventoId, setEventoId] = useState<string>('');
     const [totalInscricoes, setTotalInscricoes] = useState<number>(0);
-    const [carregandoInscricoes, setCarregandoInscricoes] = useState(false);
 
     // Estados do formulário
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -55,20 +53,6 @@ export default function EventoView() {
         carregarEvento();
     }, [slug]);
 
-    const contarInscricoes = async (eventoIdParam: string) => {
-        try {
-            setCarregandoInscricoes(true);
-            const inscricoesRef = collection(db, 'eventos', eventoIdParam, 'dadospessoas');
-            const inscricoesSnapshot = await getDocs(inscricoesRef);
-            setTotalInscricoes(inscricoesSnapshot.size);
-        } catch (error) {
-            console.error('Erro ao contar inscrições:', error);
-            setTotalInscricoes(0);
-        } finally {
-            setCarregandoInscricoes(false);
-        }
-    };
-
     const carregarEvento = async () => {
         if (!slug) {
             navigate('/eventos');
@@ -76,65 +60,28 @@ export default function EventoView() {
         }
 
         try {
-            // Primeiro, tentar buscar por slug
-            const { collection: firestoreCollection, query, where, getDocs: getDocsFirestore } = await import('firebase/firestore');
-            const eventosRef = firestoreCollection(db, 'eventos');
-            const q = query(eventosRef, where('slug', '==', slug));
-            const querySnapshot = await getDocsFirestore(q);
+            // A API resolve slug ou id no mesmo endpoint e ja traz a contagem.
+            const data = await eventosApi.buscar(slug);
 
-            let eventoData = null;
-            let docId = '';
+            const eventoData = {
+                id: data.id,
+                titulo: data.titulo,
+                imagemUrl: data.imagem_url,
+                link: data.link,
+                descricao: data.descricao || '',
+                botoes: data.botoes || [],
+                criadoEm: new Date(data.criado_em),
+                slug: data.slug ?? undefined,
+                metaInscricoes: data.meta_inscricoes || 0,
+                inscricaoHabilitada: data.inscricao_habilitada !== false,
+                linkFormularioExterno: data.link_formulario_externo || ''
+            };
 
-            if (!querySnapshot.empty) {
-                const docSnap = querySnapshot.docs[0];
-                const data = docSnap.data();
-                docId = docSnap.id;
-                eventoData = {
-                    id: docSnap.id,
-                    titulo: data.titulo,
-                    imagemUrl: data.imagemUrl,
-                    link: data.link,
-                    descricao: data.descricao || '',
-                    botoes: data.botoes || [],
-                    criadoEm: data.criadoEm?.toDate() || new Date(),
-                    slug: data.slug,
-                    metaInscricoes: data.metaInscricoes || 0,
-                    inscricaoHabilitada: data.inscricaoHabilitada !== false, // Por padrão true
-                    linkFormularioExterno: data.linkFormularioExterno || ''
-                };
-            } else {
-                // Se não encontrar por slug, tentar buscar por ID
-                const docRef = doc(db, 'eventos', slug);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    docId = docSnap.id;
-                    eventoData = {
-                        id: docSnap.id,
-                        titulo: data.titulo,
-                        imagemUrl: data.imagemUrl,
-                        link: data.link,
-                        descricao: data.descricao || '',
-                        botoes: data.botoes || [],
-                        criadoEm: data.criadoEm?.toDate() || new Date(),
-                        slug: data.slug,
-                        metaInscricoes: data.metaInscricoes || 0,
-                        inscricaoHabilitada: data.inscricaoHabilitada !== false, // Por padrão true
-                        linkFormularioExterno: data.linkFormularioExterno || ''
-                    };
-                } else {
-                    navigate('/eventos');
-                    return;
-                }
-            }
-
-            setEventoId(docId);
+            setEventoId(data.id);
             setEvento(eventoData);
 
-            // Contar inscrições se há uma meta definida E formulário interno habilitado
-            if (eventoData.metaInscricoes && eventoData.metaInscricoes > 0 && eventoData.inscricaoHabilitada !== false) {
-                await contarInscricoes(docId);
+            if (eventoData.metaInscricoes > 0 && eventoData.inscricaoHabilitada) {
+                setTotalInscricoes(data.total_inscricoes ?? 0);
             }
 
         } catch (error) {
@@ -223,24 +170,17 @@ export default function EventoView() {
         setSubmitStatus('idle');
 
         try {
-            // Salvar no Firestore na subcoleção do evento
-            const leadData = {
+            // Salvar a inscrição. A resposta já traz o total atualizado.
+            const { totalInscricoes: novoTotal } = await eventosApi.inscrever(eventoId, {
                 nome: formData.nome,
                 whatsapp: formData.whatsapp,
                 email: formData.email,
                 cep: formData.cep,
                 bairro: formData.bairro,
                 estado: formData.estado,
-                cidade: formData.cidade,
-                eventoId: eventoId,
-                eventoTitulo: evento.titulo,
-                criadoEm: Timestamp.now()
-            };
-
-            await addDoc(
-                collection(db, 'eventos', eventoId, 'dadospessoas'),
-                leadData
-            );
+                cidade: formData.cidade
+            });
+            setTotalInscricoes(novoTotal);
 
             // Enviar para Google Sheets
             const response = await fetch('/api/submit', {
@@ -260,10 +200,7 @@ export default function EventoView() {
                 setSubmitStatus('success');
                 setSubmitMessage('Inscrição realizada com sucesso! Em breve entraremos em contato.');
 
-                // Recarregar contagem de inscrições
-                if (evento.metaInscricoes && evento.metaInscricoes > 0 && evento.inscricaoHabilitada !== false) {
-                    await contarInscricoes(eventoId);
-                }
+                // A contagem já foi atualizada com a resposta da inscrição.
 
                 resetForm();
                 setTimeout(() => {
@@ -430,7 +367,7 @@ export default function EventoView() {
                                         <Users className="w-5 h-5 text-[#eab308]" />
                                         <span className="text-white font-semibold">Vagas Disponíveis</span>
                                     </div>
-                                    {carregandoInscricoes ? (
+                                    {loading ? (
                                         <div className="flex items-center gap-2 text-zinc-400">
                                             <Loader2 className="w-4 h-4 animate-spin" />
                                             <span>Carregando...</span>

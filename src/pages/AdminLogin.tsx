@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { auth } from '../lib/api';
 import { motion } from 'motion/react';
 import { Lock, Mail, AlertCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -18,20 +17,14 @@ export default function AdminLogin() {
         setLoading(true);
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await auth.login(email, password);
             navigate('/admin/dashboard');
         } catch (error) {
-            const err = error as { code?: string; message?: string };
+            const err = error as { status?: number; message?: string };
             console.error(err);
-            if (err.code === 'auth/invalid-credential') {
-                setError('Email ou senha incorretos.');
-            } else if (err.code === 'auth/user-not-found') {
-                setError('Usuário não encontrado.');
-            } else if (err.code === 'auth/wrong-password') {
-                setError('Senha incorreta.');
-            } else {
-                setError('Erro ao fazer login. Tente novamente.');
-            }
+            setError(err.status === 401
+                ? 'Email ou senha incorretos.'
+                : 'Erro ao fazer login. Tente novamente.');
         } finally {
             setLoading(false);
         }

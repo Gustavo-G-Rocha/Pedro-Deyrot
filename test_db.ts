@@ -1,21 +1,47 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+/**
+ * Smoke test da conexão com o Postgres. Roda com: npx tsx test_db.ts
+ * Lista o que existe em cada tabela — útil pra conferir o resultado da migração.
+ */
+import dotenv from "dotenv";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCOKhOFjhzEzTxirYIaggLU6YTulbP_CpI",
-    authDomain: "deyrot-e4381.firebaseapp.com",
-    projectId: "deyrot-e4381",
-    storageBucket: "deyrot-e4381.firebasestorage.app",
-    messagingSenderId: "421061329011",
-    appId: "1:421061329011:web:691ea3d833a6dc5ff46a06"
-};
+dotenv.config();
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const { pool, query } = await import("./server/db.js");
+
+const TABELAS = [
+  "admin_users",
+  "arquivos",
+  "eventos",
+  "evento_inscricoes",
+  "denuncias",
+  "denuncia_leads",
+  "denuncia_formulario_acessos",
+  "campanhas",
+  "voluntarios",
+  "abaixo_assinado_assinaturas",
+];
 
 async function run() {
-    const snapshot = await getDocs(collection(db, 'denuncias'));
-    snapshot.forEach(doc => console.log(doc.data().pdfUrl));
-    process.exit(0);
+  console.log("Contagem por tabela:\n");
+
+  for (const tabela of TABELAS) {
+    try {
+      const { rows } = await query<{ total: number }>(`SELECT count(*)::int AS total FROM ${tabela}`);
+      console.log(`  ${tabela.padEnd(30)} ${rows[0].total}`);
+    } catch (e) {
+      console.log(`  ${tabela.padEnd(30)} — ${(e as Error).message}`);
+    }
+  }
+
+  const { rows: denuncias } = await query<{ slug: string; pdf_url: string }>(
+    "SELECT slug, pdf_url FROM denuncias ORDER BY criado_em DESC"
+  );
+  if (denuncias.length > 0) {
+    console.log("\nDenúncias e seus PDFs:\n");
+    denuncias.forEach((d) => console.log(`  /${d.slug} -> ${d.pdf_url || "(sem PDF)"}`));
+  }
+
+  await pool.end();
 }
+
 run();

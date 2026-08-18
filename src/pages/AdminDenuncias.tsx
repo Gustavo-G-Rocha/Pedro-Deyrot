@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, getDocs, deleteDoc, doc, Timestamp } from 'firebase/firestore';
-import { ref, deleteObject } from 'firebase/storage';
-import { auth, db, storage } from '../config/firebase';
+import { auth, arquivos, denuncias as denunciasApi } from '../lib/api';
 import { motion, AnimatePresence } from 'motion/react';
 import { Plus, Trash2, Edit2, Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, FileText, ArrowLeft, Lock, Unlock, Users } from 'lucide-react';
 
@@ -33,14 +31,13 @@ export default function AdminDenuncias() {
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (!user) {
+        auth.me().then((admin) => {
+            if (!admin) {
                 navigate('/admin');
             } else {
                 carregarDenuncias();
             }
         });
-        return () => unsubscribe();
     }, [navigate]);
 
     // Filtrar denúncias vazias se necessário
@@ -55,25 +52,21 @@ export default function AdminDenuncias() {
 
     const carregarDenuncias = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, 'denuncias'));
-            const denunciasData: Denuncia[] = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                denunciasData.push({
-                    id: doc.id,
-                    titulo: data.titulo,
-                    slug: data.slug,
-                    descricao: data.descricao,
-                    pdfUrl: data.pdfUrl,
-                    secoes: data.secoes || [],
-                    status: data.status,
-                    formularioAtivo: data.formularioAtivo ?? false,
-                    criadoEm: data.criadoEm?.toDate() || new Date(),
-                    atualizadoEm: data.atualizadoEm?.toDate() || new Date(),
-                    estatisticas: data.estatisticas || { visualizacoes: 0, downloads: 0, formularioEnvios: 0 }
-                });
-            });
-            setDenuncias(denunciasData.sort((a, b) => b.atualizadoEm.getTime() - a.atualizadoEm.getTime()));
+            const dados = await denunciasApi.listar();
+            const mapeadas = dados.map((d) => ({
+                id: d.id,
+                titulo: d.titulo,
+                slug: d.slug,
+                descricao: d.descricao,
+                pdfUrl: d.pdf_url,
+                secoes: d.secoes || [],
+                status: d.status as 'publicado' | 'rascunho',
+                formularioAtivo: d.formulario_ativo ?? false,
+                criadoEm: new Date(d.criado_em),
+                atualizadoEm: new Date(d.atualizado_em),
+                estatisticas: d.estatisticas
+            }));
+            setDenuncias(mapeadas.sort((a, b) => b.atualizadoEm.getTime() - a.atualizadoEm.getTime()));
         } catch (error) {
             console.error('Erro ao carregar denúncias:', error);
             showMessage('error', 'Erro ao carregar denúncias');
@@ -99,16 +92,9 @@ export default function AdminDenuncias() {
         if (!confirm(`Tem certeza que deseja deletar a denúncia "${denuncia.titulo || 'Sem título'}"?`)) return;
 
         try {
-            // Deletar PDF do Storage
-            if (denuncia.pdfUrl) {
-                const pdfRef = ref(storage, denuncia.pdfUrl);
-                await deleteObject(pdfRef).catch(() => {
-                    // Ignorar erro se PDF já foi deletado
-                });
-            }
-
-            // Deletar documento do Firestore
-            await deleteDoc(doc(db, 'denuncias', denuncia.id));
+            // Os leads caem junto com a denúncia (ON DELETE CASCADE)
+            await denunciasApi.remover(denuncia.id);
+            await arquivos.remover(denuncia.pdfUrl);
 
             showMessage('success', 'Denúncia deletada com sucesso!');
             carregarDenuncias();
@@ -132,13 +118,8 @@ export default function AdminDenuncias() {
             let deletados = 0;
             for (const denuncia of rascunhosVazios) {
                 try {
-                    // Deletar PDF se existir
-                    if (denuncia.pdfUrl) {
-                        const pdfRef = ref(storage, denuncia.pdfUrl);
-                        await deleteObject(pdfRef).catch(() => { });
-                    }
-                    // Deletar documento
-                    await deleteDoc(doc(db, 'denuncias', denuncia.id));
+                    await denunciasApi.remover(denuncia.id);
+                    await arquivos.remover(denuncia.pdfUrl);
                     deletados++;
                 } catch (error) {
                     console.error(`Erro ao deletar denúncia ${denuncia.id}:`, error);

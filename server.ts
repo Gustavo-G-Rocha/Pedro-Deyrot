@@ -5,19 +5,59 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import os from "os";
 
-// Carregar variáveis de ambiente
+// Carregar variáveis de ambiente antes de qualquer módulo que leia process.env
 dotenv.config();
+
+const { runMigrations } = await import("./server/db.js");
+const { default: authRouter } = await import("./server/routes/auth.js");
+const { default: arquivosRouter } = await import("./server/routes/arquivos.js");
+const { default: eventosRouter } = await import("./server/routes/eventos.js");
+const { default: denunciasRouter } = await import("./server/routes/denuncias.js");
+const { default: campanhasRouter } = await import("./server/routes/campanhas.js");
+const { default: voluntariosRouter } = await import("./server/routes/voluntarios.js");
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  // O Railway define a PORT; 3000 é o fallback local.
+  const PORT = Number(process.env.PORT) || 3000;
 
-  app.use(express.json());
+  // Necessário para req.ip enxergar o IP real por trás do proxy do Railway.
+  app.set("trust proxy", 1);
 
-  // API Route for Form Submission
+  // Limite generoso: o editor de denúncias manda descrições longas.
+  app.use(express.json({ limit: "2mb" }));
+
+  // Aplica db/schema.sql e garante o admin inicial
+  await runMigrations();
+
+  // ---------------------------------------------------------------------
+  // API (Postgres)
+  // ---------------------------------------------------------------------
+  app.use("/api/auth", authRouter);
+  app.use("/api/arquivos", arquivosRouter);
+  app.use("/api/eventos", eventosRouter);
+  app.use("/api/denuncias", denunciasRouter);
+  app.use("/api/campanhas", campanhasRouter);
+  app.use("/api/voluntarios", voluntariosRouter);
+
+  app.get("/api/health", async (_req, res) => {
+    const { query } = await import("./server/db.js");
+    try {
+      await query("SELECT 1");
+      res.json({ ok: true, db: "up" });
+    } catch (e) {
+      res.status(503).json({ ok: false, db: "down", error: (e as Error).message });
+    }
+  });
+
+  // ---------------------------------------------------------------------
+  // Integrações existentes
+  // ---------------------------------------------------------------------
+
+  // Espelho dos formulários para a planilha do Google (opcional)
   app.post("/api/submit", async (req, res) => {
     try {
       const formData = req.body;
@@ -80,21 +120,30 @@ async function startServer() {
 
       console.log('🔄 [API] Proxying PDF:', url);
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         console.error("❌ [API] Failed to fetch PDF:", response.status, response.statusText);
         return res.status(response.status).send("Failed to fetch PDF");
       }
-      
+
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Content-Type", "application/pdf");
-      
+
       const arrayBuffer = await response.arrayBuffer();
       res.send(Buffer.from(arrayBuffer));
     } catch (error) {
       console.error("❌ [API] PDF Proxy error:", error);
       res.status(500).send("Internal proxy error");
     }
+  });
+
+  // Erros dos handlers async (inclusive o limite de tamanho do multer)
+  app.use((err: Error & { code?: string }, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).json({ error: "Arquivo muito grande (máx. 25 MB)" });
+    }
+    console.error("❌ [API] Erro não tratado:", err);
+    res.status(500).json({ error: "Erro interno do servidor" });
   });
 
   // Vite middleware for development
@@ -124,7 +173,7 @@ async function startServer() {
       }
       return '192.168.x.x'; // Fallback
     };
-    
+
     console.log(`\n🚀 Servidor rodando localmente: http://localhost:${PORT}`);
     console.log(`📱 Servidor rodando na rede: http://${getNetworkIp()}:${PORT}\n`);
   });

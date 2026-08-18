@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Calendar, Loader2, ExternalLink, Users, Search } from 'lucide-react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { eventos as eventosApi } from '../lib/api';
 import { useNavigate } from 'react-router-dom';
 
 interface Botao {
@@ -37,44 +36,23 @@ export default function Eventos() {
 
     const carregarEventos = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, 'eventos'));
-            const eventosData: Evento[] = [];
+            // A API ja devolve a contagem de inscricoes agregada por evento.
+            const dados = await eventosApi.listar();
 
-            // Carregar eventos e suas inscrições em paralelo
-            const eventosPromises = querySnapshot.docs.map(async (doc) => {
-                const data = doc.data();
-
-                // Contar inscrições se há uma meta definida E formulário interno habilitado
-                let totalInscricoes = 0;
-                if (data.metaInscricoes && data.metaInscricoes > 0 && data.inscricaoHabilitada !== false) {
-                    try {
-                        const inscricoesSnapshot = await getDocs(
-                            collection(db, 'eventos', doc.id, 'dadospessoas')
-                        );
-                        totalInscricoes = inscricoesSnapshot.size;
-                    } catch (error) {
-                        console.error('Erro ao contar inscrições:', error);
-                    }
-                }
-
-                return {
-                    id: doc.id,
-                    titulo: data.titulo,
-                    imagemUrl: data.imagemUrl,
-                    link: data.link,
-                    descricao: data.descricao || '',
-                    botoes: data.botoes || [],
-                    criadoEm: data.criadoEm?.toDate() || new Date(),
-                    slug: data.slug || doc.id,
-                    metaInscricoes: data.metaInscricoes || 0,
-                    totalInscricoes,
-                    inscricaoHabilitada: data.inscricaoHabilitada !== false,
-                    linkFormularioExterno: data.linkFormularioExterno || ''
-                };
-            });
-
-            const eventosCarregados = await Promise.all(eventosPromises);
-            setEventos(eventosCarregados.sort((a, b) => b.criadoEm.getTime() - a.criadoEm.getTime()));
+            setEventos(dados.map((e) => ({
+                id: e.id,
+                titulo: e.titulo,
+                imagemUrl: e.imagem_url,
+                link: e.link,
+                descricao: e.descricao || '',
+                botoes: e.botoes || [],
+                criadoEm: new Date(e.criado_em),
+                slug: e.slug || e.id,
+                metaInscricoes: e.meta_inscricoes || 0,
+                totalInscricoes: e.total_inscricoes || 0,
+                inscricaoHabilitada: e.inscricao_habilitada !== false,
+                linkFormularioExterno: e.link_formulario_externo || ''
+            })));
         } catch (error) {
             console.error('Erro ao carregar eventos:', error);
         } finally {

@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { collection, addDoc, doc, getDoc, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { auth, db, storage } from '../config/firebase';
+import { auth, arquivos, denuncias as denunciasApi, ApiError } from '../lib/api';
 import { motion, AnimatePresence } from 'motion/react';
 import {
     ArrowLeft, Save, Eye, EyeOff, FileText, Upload,
@@ -36,14 +34,13 @@ export default function AdminDenunciaEditor() {
     const [mostrarPrevia, setMostrarPrevia] = useState(false);
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (!user) {
+        auth.me().then((admin) => {
+            if (!admin) {
                 navigate('/admin');
             } else if (isEditMode) {
                 carregarDenuncia();
             }
         });
-        return () => unsubscribe();
     }, [id]);
 
     // Auto-gerar slug a partir do título
@@ -65,30 +62,29 @@ export default function AdminDenunciaEditor() {
         if (!id) return;
 
         try {
-            const denunciaDoc = await getDoc(doc(db, 'denuncias', id));
-            if (denunciaDoc.exists()) {
-                const data = denunciaDoc.data();
-                setTitulo(data.titulo);
-                setSlug(data.slug);
-                setDescricao(data.descricao);
-                setStatus(data.status);
-                setPdfUrl(data.pdfUrl || '');
-                setFormularioAtivo(data.formularioAtivo ?? false);
-                setImageUrl(data.imagemUrl || '');
-                if (data.imagemUrl) setImagePreview(data.imagemUrl);
-                // Extrair nome do arquivo do URL
-                if (data.pdfUrl) {
-                    const urlParts = data.pdfUrl.split('/');
-                    const fileName = urlParts[urlParts.length - 1].split('?')[0];
-                    setPdfFileName(decodeURIComponent(fileName));
-                }
-            } else {
-                showMessage('error', 'Denúncia não encontrada');
-                navigate('/admin/denuncias');
+            const data = await denunciasApi.buscar(id);
+            setTitulo(data.titulo);
+            setSlug(data.slug);
+            setDescricao(data.descricao);
+            setStatus(data.status as 'publicado' | 'rascunho');
+            setPdfUrl(data.pdf_url || '');
+            setFormularioAtivo(data.formulario_ativo ?? false);
+            setImageUrl(data.imagem_url || '');
+            if (data.imagem_url) setImagePreview(data.imagem_url);
+            // Extrair nome do arquivo do URL
+            if (data.pdf_url) {
+                const urlParts = data.pdf_url.split('/');
+                const fileName = urlParts[urlParts.length - 1].split('?')[0];
+                setPdfFileName(decodeURIComponent(fileName));
             }
         } catch (error) {
             console.error('Erro ao carregar denúncia:', error);
-            showMessage('error', 'Erro ao carregar denúncia');
+            if (error instanceof ApiError && error.status === 404) {
+                showMessage('error', 'Denúncia não encontrada');
+                navigate('/admin/denuncias');
+            } else {
+                showMessage('error', 'Erro ao carregar denúncia');
+            }
         } finally {
             setLoading(false);
         }
@@ -145,27 +141,15 @@ export default function AdminDenunciaEditor() {
 
             // Upload do PDF se houver um novo arquivo
             if (pdfFile) {
-                const pdfRef = ref(storage, `denuncias/${Date.now()}_${pdfFile.name}`);
-                await uploadBytes(pdfRef, pdfFile);
-                finalPdfUrl = await getDownloadURL(pdfRef);
-
-                // Se está editando e tinha PDF antigo, deletar
-                if (isEditMode && pdfUrl) {
-                    const oldPdfRef = ref(storage, pdfUrl);
-                    await deleteObject(oldPdfRef).catch(() => { });
-                }
+                finalPdfUrl = await arquivos.upload(pdfFile);
+                if (isEditMode) await arquivos.remover(pdfUrl);
             }
 
             // Upload da imagem de capa
             let finalImageUrl = imageUrl;
             if (imageFile) {
-                const imgRef = ref(storage, `denuncias/imagens/${Date.now()}_${imageFile.name}`);
-                await uploadBytes(imgRef, imageFile);
-                finalImageUrl = await getDownloadURL(imgRef);
-                if (isEditMode && imageUrl) {
-                    const oldImgRef = ref(storage, imageUrl);
-                    await deleteObject(oldImgRef).catch(() => { });
-                }
+                finalImageUrl = await arquivos.upload(imageFile);
+                if (isEditMode) await arquivos.remover(imageUrl);
             }
 
             const denunciaData = {
@@ -175,29 +159,22 @@ export default function AdminDenunciaEditor() {
                 pdfUrl: finalPdfUrl,
                 imagemUrl: finalImageUrl,
                 status,
-                formularioAtivo,
-                atualizadoEm: Timestamp.now(),
-                ...(isEditMode ? {} : {
-                    criadoEm: Timestamp.now(),
-                    estatisticas: {
-                        visualizacoes: 0,
-                        downloads: 0,
-                        formularioEnvios: 0
-                    }
-                })
+                formularioAtivo
             };
 
             if (isEditMode && id) {
-                await updateDoc(doc(db, 'denuncias', id), denunciaData);
+                await denunciasApi.atualizar(id, denunciaData);
+                setPdfUrl(finalPdfUrl);
+                setImageUrl(finalImageUrl);
                 showMessage('success', 'Denúncia atualizada com sucesso!');
             } else {
-                await setDoc(doc(db, 'denuncias', slug), denunciaData);
+                await denunciasApi.criar(denunciaData);
                 showMessage('success', 'Denúncia criada com sucesso!');
                 setTimeout(() => navigate('/admin/denuncias'), 2000);
             }
         } catch (error) {
             console.error('Erro ao salvar denúncia:', error);
-            showMessage('error', 'Erro ao salvar denúncia');
+            showMessage('error', error instanceof ApiError ? error.message : 'Erro ao salvar denúncia');
         } finally {
             setSaving(false);
         }

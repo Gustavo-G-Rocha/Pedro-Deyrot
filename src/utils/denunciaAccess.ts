@@ -1,9 +1,14 @@
-import { db } from '@/src/config/firebase';
-import { collection, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
+import { denuncias as denunciasApi } from '@/src/lib/api';
 import Cookies from 'js-cookie';
 
 const COOKIE_NAME = 'denuncia_access';
 const COOKIE_EXPIRES = 7; // dias
+
+export interface DenunciaUserData {
+    nome: string;
+    email: string;
+    timestamp: string;
+}
 
 export interface DenunciaFormData {
     nome: string;
@@ -14,14 +19,14 @@ export interface DenunciaFormData {
 }
 
 /**
- * Verifica se o usuário já tem acesso (via cookie ou Firebase)
+ * Verifica se o usuário já tem acesso (via cookie ou sessão)
  */
-export async function checkDenunciaAccess(): Promise<{ hasAccess: boolean; userData?: Record<string, unknown> }> {
+export async function checkDenunciaAccess(): Promise<{ hasAccess: boolean; userData?: DenunciaUserData }> {
     // Primeiro verificar cookie
     const cookieData = Cookies.get(COOKIE_NAME);
     if (cookieData) {
         try {
-            const userData = JSON.parse(cookieData);
+            const userData = JSON.parse(cookieData) as DenunciaUserData;
             return { hasAccess: true, userData };
         } catch (error) {
             console.error('Erro ao ler cookie:', error);
@@ -32,7 +37,7 @@ export async function checkDenunciaAccess(): Promise<{ hasAccess: boolean; userD
     const sessionData = sessionStorage.getItem('denunciaUserData');
     if (sessionData) {
         try {
-            const userData = JSON.parse(sessionData);
+            const userData = JSON.parse(sessionData) as DenunciaUserData;
             return { hasAccess: true, userData };
         } catch (error) {
             console.error('Erro ao ler sessionStorage:', error);
@@ -61,24 +66,15 @@ export async function registerDenunciaAccess(formData: DenunciaFormData): Promis
 }
 
 /**
- * Salva os dados da denúncia no Firebase
+ * Salva os dados do formulário de acesso no banco
  */
-export async function saveDenunciaToFirebase(formData: DenunciaFormData): Promise<string> {
+export async function salvarAcessoDenuncia(formData: DenunciaFormData): Promise<string> {
     try {
-        // Usar 'denuncias_formulario' para dados do formulário (diferente de 'denuncias' que são os dossiês)
-        const denunciaRef = collection(db, 'denuncias_formulario');
-
-        const docRef = await addDoc(denunciaRef, {
-            ...formData,
-            tipo: 'formulario_acesso',
-            timestamp: serverTimestamp(),
-            createdAt: new Date().toISOString(),
-            ip: await getUserIP()
-        });
-
-        return docRef.id;
+        // O IP é resolvido no servidor, a partir do próprio request.
+        const { id } = await denunciasApi.registrarAcesso(formData);
+        return id;
     } catch (error) {
-        console.error('Erro ao salvar no Firebase:', error);
+        console.error('Erro ao salvar no banco:', error);
         throw error;
     }
 }
@@ -88,29 +84,12 @@ export async function saveDenunciaToFirebase(formData: DenunciaFormData): Promis
  */
 export async function checkEmailExists(email: string): Promise<boolean> {
     try {
-        // Usar 'denuncias_formulario' para verificar emails do formulário
-        const denunciaRef = collection(db, 'denuncias_formulario');
-        const q = query(denunciaRef, where('email', '==', email));
-        const querySnapshot = await getDocs(q);
-
-        return !querySnapshot.empty;
+        const { existe } = await denunciasApi.emailJaCadastrado(email);
+        return existe;
     } catch (error) {
         console.error('Erro ao verificar email:', error);
         // Retornar false em caso de erro para não bloquear o usuário
         return false;
-    }
-}
-
-/**
- * Obtém o IP do usuário (aproximado)
- */
-async function getUserIP(): Promise<string> {
-    try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        return data.ip || 'unknown';
-    } catch (error) {
-        return 'unknown';
     }
 }
 

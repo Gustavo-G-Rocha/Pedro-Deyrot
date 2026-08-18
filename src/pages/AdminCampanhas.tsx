@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, addDoc, deleteDoc, doc, getDocs, updateDoc, Timestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { db, storage } from '../config/firebase';
+import { auth, arquivos, campanhas as campanhasApi } from '../lib/api';
 import { motion, AnimatePresence } from 'motion/react';
 import {
     Plus, Trash2, Edit2, X, Loader2, AlertCircle, CheckCircle2,
@@ -39,28 +37,29 @@ export default function AdminCampanhas() {
     const [imagemPreview, setImagemPreview] = useState<string | null>(null);
 
     useEffect(() => {
-        carregarCampanhas();
-    }, []);
+        auth.me().then((admin) => {
+            if (!admin) {
+                navigate('/admin');
+            } else {
+                carregarCampanhas();
+            }
+        });
+    }, [navigate]);
 
     const carregarCampanhas = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, 'campanhas'));
-            const campanhasData: Campanha[] = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                campanhasData.push({
-                    id: doc.id,
-                    titulo: data.titulo,
-                    descricao: data.descricao,
-                    imagemUrl: data.imagemUrl,
-                    dataInicio: data.dataInicio?.toDate() || new Date(),
-                    dataFim: data.dataFim?.toDate() || new Date(),
-                    status: data.status,
-                    inscricoes: data.inscricoes || 0,
-                    criadoEm: data.criadoEm?.toDate() || new Date()
-                });
-            });
-            setCampanhas(campanhasData.sort((a, b) => b.criadoEm.getTime() - a.criadoEm.getTime()));
+            const dados = await campanhasApi.listar();
+            setCampanhas(dados.map((c) => ({
+                id: c.id,
+                titulo: c.titulo,
+                descricao: c.descricao,
+                imagemUrl: c.imagem_url,
+                dataInicio: c.data_inicio ? new Date(c.data_inicio) : new Date(),
+                dataFim: c.data_fim ? new Date(c.data_fim) : new Date(),
+                status: c.status,
+                inscricoes: c.inscricoes || 0,
+                criadoEm: new Date(c.criado_em)
+            })));
         } catch (error) {
             console.error('Erro ao carregar campanhas:', error);
             showMessage('error', 'Erro ao carregar campanhas');
@@ -102,49 +101,29 @@ export default function AdminCampanhas() {
         setSaving(true);
 
         try {
-            let imagemUrl = imagemPreview;
+            const campanhaAntiga = editandoId ? campanhas.find(c => c.id === editandoId) : undefined;
+            let imagemUrl = campanhaAntiga?.imagemUrl ?? '';
 
-            // Upload da imagem se houver
+            // Upload da nova imagem, descartando a antiga
             if (imagem) {
-                const imageRef = ref(storage, `campanhas/${Date.now()}_${imagem.name}`);
-                await uploadBytes(imageRef, imagem);
-                imagemUrl = await getDownloadURL(imageRef);
+                imagemUrl = await arquivos.upload(imagem);
+                await arquivos.remover(campanhaAntiga?.imagemUrl);
             }
 
             const campanhaData = {
                 titulo,
                 descricao,
-                dataInicio: Timestamp.fromDate(new Date(dataInicio)),
-                dataFim: Timestamp.fromDate(new Date(dataFim)),
-                status,
-                ...(imagem && imagemUrl ? { imagemUrl } : {}),
-                ...(editandoId ? {} : {
-                    criadoEm: Timestamp.now(),
-                    inscricoes: 0
-                })
+                imagemUrl,
+                dataInicio: new Date(dataInicio).toISOString(),
+                dataFim: new Date(dataFim).toISOString(),
+                status
             };
 
             if (editandoId) {
-                // Atualizar campanha existente
-                const campanhaRef = doc(db, 'campanhas', editandoId);
-
-                // Deletar imagem antiga se foi alterada
-                if (imagem && imagemUrl) {
-                    const campanhaAntiga = campanhas.find(c => c.id === editandoId);
-                    if (campanhaAntiga?.imagemUrl) {
-                        const oldImageRef = ref(storage, campanhaAntiga.imagemUrl);
-                        await deleteObject(oldImageRef).catch(() => { });
-                    }
-                }
-
-                await updateDoc(campanhaRef, campanhaData);
+                await campanhasApi.atualizar(editandoId, campanhaData);
                 showMessage('success', 'Campanha atualizada com sucesso!');
             } else {
-                // Criar nova campanha
-                await addDoc(collection(db, 'campanhas'), {
-                    ...campanhaData,
-                    imagemUrl
-                });
+                await campanhasApi.criar(campanhaData);
                 showMessage('success', 'Campanha criada com sucesso!');
             }
 
@@ -185,12 +164,8 @@ export default function AdminCampanhas() {
         if (!confirm(`Tem certeza que deseja deletar a campanha "${campanha.titulo}"?`)) return;
 
         try {
-            // Deletar imagem do Storage
-            const imageRef = ref(storage, campanha.imagemUrl);
-            await deleteObject(imageRef).catch(() => { });
-
-            // Deletar documento do Firestore
-            await deleteDoc(doc(db, 'campanhas', campanha.id));
+            await campanhasApi.remover(campanha.id);
+            await arquivos.remover(campanha.imagemUrl);
 
             showMessage('success', 'Campanha deletada com sucesso!');
             carregarCampanhas();
