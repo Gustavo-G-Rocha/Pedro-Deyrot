@@ -105,6 +105,17 @@ export default function Home() {
                     className="mt-8 max-w-4xl mx-auto grid sm:grid-cols-2 gap-4"
                 >
                     <a
+                        href={materialHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-center gap-3 rounded-2xl bg-[#eab308] px-6 py-5 text-black font-bold text-lg transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-[#eab308]/25"
+                    >
+                        <Package className="w-6 h-6" />
+                        Pedir kit
+                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    </a>
+
+                    <a
                         href={WHATSAPP_GRUPO}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -112,17 +123,6 @@ export default function Home() {
                     >
                         <MessageCircle className="w-6 h-6" />
                         Entrar no grupo do WhatsApp
-                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                    </a>
-
-                    <a
-                        href={materialHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex items-center justify-center gap-3 rounded-2xl bg-[#eab308] px-6 py-5 text-black font-bold text-lg transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-[#eab308]/25"
-                    >
-                        <Package className="w-6 h-6" />
-                        Pedir material
                         <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                     </a>
                 </motion.div>

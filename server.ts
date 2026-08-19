@@ -189,9 +189,6 @@ async function startServer() {
   // reinicia em loop e o motivo real nunca aparece.
   try {
     await runMigrations();
-    // Primeira subida com o banco vazio: cadastra os dossies ja publicados.
-    const { seedDenuncias } = await import("./server/seed-denuncias.js");
-    await seedDenuncias();
     estadoMigracao = "ok";
   } catch (e) {
     estadoMigracao = "falhou";
