@@ -74,7 +74,7 @@ export default function Propostas() {
                     className="text-center mb-12"
                 >
                     <h1 className="text-4xl md:text-6xl font-black text-white mb-4">
-                        Nossas <span className="text-[#eab308]">Propostas</span>
+                        Vamos acabar <span className="text-[#eab308]">com</span>
                     </h1>
                     <p className="text-xl text-zinc-300 max-w-2xl mx-auto">
                         Clique em uma proposta para ler o compromisso completo.
@@ -93,14 +93,16 @@ export default function Propostas() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, amount: 0.2 }}
                                 transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
-                                className={`group text-left flex flex-col h-full rounded-2xl p-8 border-2 transition-all hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1 cursor-pointer ${tema.card}`}
+                                className={`group text-left flex flex-col justify-between h-full min-h-[11rem] rounded-2xl p-8 border-2 transition-all hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1 cursor-pointer ${tema.card}`}
                             >
-                                <h2 className={`text-2xl font-black mb-3 leading-tight ${tema.titulo}`}>
+                                <h2 className={`text-2xl md:text-3xl font-black leading-tight ${tema.titulo}`}>
                                     {proposta.titulo}
                                 </h2>
-                                <p className={`flex-1 leading-relaxed ${tema.texto}`}>
-                                    {proposta.resumo}
-                                </p>
+                                {proposta.resumo && (
+                                    <p className={`mt-3 flex-1 leading-relaxed ${tema.texto}`}>
+                                        {proposta.resumo}
+                                    </p>
+                                )}
                                 <span className={`mt-6 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider ${tema.acento}`}>
                                     Ver proposta
                                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -147,11 +149,17 @@ export default function Propostas() {
                             </h2>
 
                             <div className="space-y-4">
-                                {aberta.proposta.conteudo.map((paragrafo, idx) => (
-                                    <p key={idx} className={`text-lg leading-relaxed ${temas[aberta.tema].modalTexto}`}>
-                                        {paragrafo}
+                                {aberta.proposta.conteudo.length > 0 ? (
+                                    aberta.proposta.conteudo.map((paragrafo, idx) => (
+                                        <p key={idx} className={`text-lg leading-relaxed ${temas[aberta.tema].modalTexto}`}>
+                                            {paragrafo}
+                                        </p>
+                                    ))
+                                ) : (
+                                    <p className={`text-lg leading-relaxed italic ${temas[aberta.tema].modalTexto}`}>
+                                        Texto completo em breve.
                                     </p>
-                                ))}
+                                )}
                             </div>
 
                             {aberta.proposta.topicos && aberta.proposta.topicos.length > 0 && (

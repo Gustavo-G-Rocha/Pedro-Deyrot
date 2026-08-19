@@ -1,57 +1,34 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowRight, Users, Calendar, ChevronDown, MessageCircle, Package } from 'lucide-react';
+import { ArrowRight, Users, Calendar, MessageCircle, Package } from 'lucide-react';
 import { WHATSAPP_GRUPO, materialHref } from '../config/links';
 
 export default function Home() {
     return (
-        <div className="relative min-h-[200vh] overflow-hidden">
-            {/* Background - Desktop */}
-            <div
-                className="absolute inset-0 z-0 bg-contain bg-top bg-no-repeat hidden md:block"
-                style={{
-                    backgroundImage: `url('/fundohome-2026.png')`,
-                    backgroundSize: '100% auto'
-                }}
-            />
+        <div className="relative bg-[#1a1a1a] overflow-hidden">
+            {/* Foto de topo no fluxo normal da página: assim o conteúdo sempre
+                começa DEPOIS da imagem, sem invadir a arte e sem sobrar vão.
+                O <picture> troca desktop/mobile baixando só o arquivo usado. */}
+            <div className="relative">
+                <picture>
+                    <source media="(min-width: 768px)" srcSet="/fundohome-2026.png" />
+                    <img
+                        src="/fundomobile-2026.png"
+                        alt="Pedro Deyrot 1414 - Deputado Federal"
+                        className="block w-full"
+                    />
+                </picture>
 
-            {/* Background - Mobile (9:16) */}
-            <div
-                className="absolute inset-0 z-0 bg-contain bg-top bg-no-repeat md:hidden"
-                style={{
-                    backgroundImage: `url('/fundomobile-2026.png')`,
-                    backgroundSize: '100% auto'
-                }}
-            />
-
-            {/* Seta de scroll animada */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{
-                    opacity: [1, 0.5, 1],
-                    y: [0, 15, 0],
-                    scale: [1, 1.1, 1]
-                }}
-                transition={{
-                    opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" },
-                    y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
-                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                }}
-                className="fixed bottom-12 left-1/2 -translate-x-1/2 z-20 cursor-pointer"
-                onClick={() => {
-                    window.scrollTo({
-                        top: window.innerHeight * 1.2,
-                        behavior: 'smooth'
-                    });
-                }}
-            >
-                <div className="bg-[#eab308]/20 rounded-full p-4 backdrop-blur-sm border-2 border-[#eab308]">
-                    <ChevronDown className="w-8 h-8 text-[#eab308] drop-shadow-2xl" strokeWidth={3} />
-                </div>
-            </motion.div>
+                {/* Gradiente para a foto se dissolver no fundo em vez de cortar seco.
+                    Alturas diferentes de proposito: na arte de desktop a borda de
+                    baixo ja e preta e a arte termina em 96,5%, entao da pra usar 8%
+                    sem apagar o "DEPUTADO FEDERAL"; na de mobile os brasoes vao ate
+                    ~98%, entao a dissolvida fica curta. */}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[3%] md:h-[8%] bg-gradient-to-b from-transparent to-[#1a1a1a]" />
+            </div>
 
             {/* Conteúdo */}
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[130vh] md:pt-[90vh] pb-20 content-section">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 md:pt-16 pb-20 content-section">
 
                 <motion.div
                     initial={{ opacity: 0, y: 50 }}
@@ -160,7 +137,7 @@ export default function Home() {
                     className="text-center mt-16"
                 >
                     <p className="text-white/80 text-lg">
-                        Pré-candidato a <span className="text-[#eab308] font-bold">Deputado Federal</span>
+                        Candidato a <span className="text-[#eab308] font-bold">Deputado Federal</span>
                     </p>
                 </motion.div>
             </div>

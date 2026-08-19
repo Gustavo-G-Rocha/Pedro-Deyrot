@@ -12,6 +12,7 @@
     "lint": "tsc --noEmit",
     "migrar": "tsx scripts/migrar-firestore.ts",
     "importar-denuncias": "tsx scripts/importar-denuncias.ts",
+    "importar-dossies": "tsx scripts/importar-dossies.ts",
     "db:check": "tsx test_db.ts"
   },
   "dependencies": {

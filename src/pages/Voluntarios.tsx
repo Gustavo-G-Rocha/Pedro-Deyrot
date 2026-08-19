@@ -204,7 +204,7 @@ export default function Voluntarios() {
     ];
 
     return (
-        <div className="relative min-h-screen flex items-center justify-center lg:justify-end p-4 lg:pr-8 overflow-hidden">
+        <div className="relative min-h-screen md:flex md:items-center md:justify-center lg:justify-end p-4 lg:pr-8 overflow-hidden">
             {/* Background - Desktop (dupla à esquerda, formulário à direita) */}
             <div
                 className="absolute inset-0 z-0 bg-cover bg-center hidden md:block"
@@ -213,32 +213,33 @@ export default function Voluntarios() {
                 }}
             />
 
-            {/* Background - Mobile (recorta pela esquerda para manter a dupla no quadro) */}
-            <div
-                className="absolute inset-0 z-0 bg-cover bg-left md:hidden"
-                style={{
-                    backgroundImage: `url('/voluntario-fundo.png')`
-                }}
-            />
-
             {/* Escurecimento para o formulário ficar legível sobre a foto */}
-            <div className="absolute inset-0 z-0 bg-black/50" />
+            <div className="absolute inset-0 z-0 bg-black/50 hidden md:block" />
+
+            {/* Mobile: a foto entra inteira no topo, sem corte nenhum, e o
+                formulário vem abaixo. Os -mx-4/-mt-4 anulam o padding do
+                container para a imagem sangrar de ponta a ponta. */}
+            <div className="md:hidden relative -mx-4 -mt-4 mb-6">
+                <img
+                    src="/voluntario-fundo.png"
+                    alt="Voluntários da campanha de Pedro Deyrot"
+                    className="block w-full"
+                />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[#1a1a1a]" />
+            </div>
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative z-10 w-full max-w-lg bg-[#242424]/70 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
+                className="relative z-10 w-full max-w-lg mx-auto md:mx-0 bg-[#242424]/70 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
             >
                 <header className="mb-8 text-center">
-                    {/* Lockup 1414 (PNG transparente: recortamos a area vazia do topo) */}
-                    <div
-                        role="img"
-                        aria-label="Pedro Deyrot 1414 - Deputado Federal"
-                        className="lg:hidden w-full max-w-[16rem] mx-auto mb-4 aspect-[1408/510] bg-no-repeat bg-bottom"
-                        style={{
-                            backgroundImage: `url('/voluntario-lockup.png')`,
-                            backgroundSize: '100% auto'
-                        }}
+                    {/* Lockup 1414 inteiro (o "Pedro Deyrot" do topo e branco,
+                        por isso so aparece sobre fundo escuro). Nada de recorte. */}
+                    <img
+                        src="/voluntario-lockup.png"
+                        alt="Pedro Deyrot 1414 - Deputado Federal"
+                        className="lg:hidden block w-full max-w-[17rem] mx-auto mb-4"
                     />
                     <p className="text-zinc-400 text-sm font-medium">Junte-se à mudança. Seja um voluntário.</p>
                 </header>
