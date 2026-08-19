@@ -10,8 +10,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
-    "db:check": "tsx test_db.ts",
-    "seed-denuncias": "tsx scripts/seed-denuncias.ts"
+    "db:check": "tsx test_db.ts"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

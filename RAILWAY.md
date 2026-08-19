@@ -76,47 +76,24 @@ Use a porta que o Railway sugerir (ele detecta pela variável `PORT`).
 
 ---
 
-## 5. Popular as denúncias
+## 5. As denúncias
 
-O schema é aplicado sozinho no boot, mas as denúncias precisam ser cadastradas.
-Dá pra fazer pelo painel `/admin` (uma a uma, subindo o PDF) ou de uma vez pelo
-script, que roda **da sua máquina**.
+Não há passo manual. Na primeira subida com o banco vazio, o servidor cadastra
+sozinho os dossiês listados em `server/seed-denuncias.ts`, com as datas originais
+(é a data que define a ordem da listagem). Os PDFs ficam versionados em
+`public/documentos/` e são servidos como arquivo estático.
 
-**a)** Pegue a URL pública do banco: serviço **Postgres** no Railway → **Variables** →
-copie o valor de **`DATABASE_PUBLIC_URL`** (a que tem `proxy.rlwy.net`; a
-`.railway.internal` só resolve dentro do Railway).
+Depois disso o seed nunca mais escreve: se a tabela tem qualquer linha, ele passa
+direto. Apagar uma denúncia pelo `/admin` não faz ela voltar no próximo deploy.
 
-**b)** Crie um `.env` local com **apenas** essa linha:
+Para publicar um dossiê novo, use o painel `/admin` — o upload vai para a tabela
+`arquivos` e é servido em `/api/arquivos/:id`.
 
-```bash
-DATABASE_URL=<cole a DATABASE_PUBLIC_URL aqui>
-```
-
-Não coloque `ADMIN_EMAIL`/`ADMIN_PASSWORD` nesse `.env`: o script aplica as migrations
-e essas variáveis reescreveriam a senha do admin em produção.
-
-**c)** Deixe os PDFs numa pasta e rode:
-
-```bash
-npm install
-npm run seed-denuncias                 # simulação, não grava nada
-npm run seed-denuncias -- --aplicar    # grava
-```
-
-Outra pasta: `npm run seed-denuncias -- --aplicar "C:/caminho/da/pasta"`.
-
-O script casa cada PDF com a denúncia pelo nome do arquivo (ignorando o prefixo de
-timestamp), grava o binário na tabela `arquivos` e aponta a denúncia para
-`/api/arquivos/<id>`, com as datas originais — é a data que define a ordem da listagem.
-É idempotente: rodar duas vezes não duplica arquivo nem zera os contadores.
-
-**d)** Confira o resultado:
+Conferir o que entrou:
 
 ```bash
 npm run db:check
 ```
-
-Mostra a contagem de cada tabela e as denúncias com seus PDFs.
 
 ---
 

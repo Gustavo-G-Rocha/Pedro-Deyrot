@@ -1,0 +1,9 @@
+# Nunca converter quebra de linha em binario: o Git detectou alguns PDFs como
+# texto e a conversao CRLF corromperia o arquivo no checkout.
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary
+*.woff  binary
+*.woff2 binary

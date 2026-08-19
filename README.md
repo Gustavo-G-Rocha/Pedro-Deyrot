@@ -26,19 +26,18 @@ de migration.
 | `npm run build` | build de produção do front em `dist/` |
 | `npm start` | sobe em produção (serve `dist/` + API) |
 | `npm run lint` | checagem de tipos (`tsc --noEmit`) |
-| `npm run seed-denuncias` | cria as denúncias a partir dos PDFs de uma pasta local |
 | `npm run db:check` | mostra a contagem de cada tabela |
 
 ## Estrutura
 
 ```
 db/schema.sql          schema do Postgres
+public/documentos/     PDFs dos dossiês publicados
 server/
   db.ts                pool de conexão + aplicação do schema no boot
+  seed-denuncias.ts    cadastra os dossiês na primeira subida (banco vazio)
   auth.ts              JWT e o middleware exigirAdmin
   routes/              endpoints REST (auth, arquivos, eventos, denuncias, campanhas, voluntarios)
-scripts/
-  seed-denuncias.ts    popula as denúncias a partir de PDFs locais
 src/
   lib/api.ts           cliente REST usado por todas as páginas
   pages/               telas públicas e administrativas
