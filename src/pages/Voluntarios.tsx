@@ -214,7 +214,7 @@ export default function Voluntarios() {
             />
 
             {/* Escurecimento para o formulário ficar legível sobre a foto */}
-            <div className="absolute inset-0 z-0 bg-black/50 hidden md:block" />
+            <div className="absolute inset-0 z-0 bg-black/25 hidden md:block" />
 
             {/* Mobile: a foto entra inteira no topo, sem corte nenhum, e o
                 formulário vem abaixo. Os -mx-4/-mt-4 anulam o padding do

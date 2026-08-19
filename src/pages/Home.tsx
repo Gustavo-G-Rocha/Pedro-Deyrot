@@ -49,6 +49,37 @@ export default function Home() {
                     </p>
                 </motion.div>
 
+                {/* Botões de ação rápida */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.8, delay: 0.1 }}
+                    className="mb-6 max-w-4xl mx-auto grid sm:grid-cols-2 gap-4"
+                >
+                    <a
+                        href={materialHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-center gap-3 rounded-2xl bg-[#eab308] px-6 py-5 text-black font-bold text-lg transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-[#eab308]/25"
+                    >
+                        <Package className="w-6 h-6" />
+                        Pedir kit
+                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    </a>
+
+                    <a
+                        href={WHATSAPP_GRUPO}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-5 text-black font-bold text-lg transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-[#25D366]/25"
+                    >
+                        <MessageCircle className="w-6 h-6" />
+                        Entrar no grupo do WhatsApp
+                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    </a>
+                </motion.div>
+
                 {/* Cards de ação */}
                 <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                     <motion.div
@@ -95,37 +126,6 @@ export default function Home() {
                         </Link>
                     </motion.div>
                 </div>
-
-                {/* Botões de ação rápida */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.8, delay: 0.1 }}
-                    className="mt-8 max-w-4xl mx-auto grid sm:grid-cols-2 gap-4"
-                >
-                    <a
-                        href={materialHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex items-center justify-center gap-3 rounded-2xl bg-[#eab308] px-6 py-5 text-black font-bold text-lg transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-[#eab308]/25"
-                    >
-                        <Package className="w-6 h-6" />
-                        Pedir kit
-                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                    </a>
-
-                    <a
-                        href={WHATSAPP_GRUPO}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-5 text-black font-bold text-lg transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-[#25D366]/25"
-                    >
-                        <MessageCircle className="w-6 h-6" />
-                        Entrar no grupo do WhatsApp
-                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                    </a>
-                </motion.div>
 
                 {/* Chamada secundária */}
                 <motion.div

@@ -1,4 +1,5 @@
 import express from "express";
+import compression from "compression";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -28,6 +29,10 @@ async function startServer() {
 
   // Necessário para req.ip enxergar o IP real por trás do proxy do Railway.
   app.set("trust proxy", 1);
+
+  // gzip em tudo que passa pelo Express. Sem isso o bundle ia cru: 478 KB em
+  // vez de ~142 KB, o que pesa bastante em 4G.
+  app.use(compression());
 
   // Limite generoso: o editor de denúncias manda descrições longas.
   app.use(express.json({ limit: "2mb" }));
@@ -161,8 +166,25 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
+
+    // Os arquivos de /assets tem hash no nome, entao nunca mudam de conteudo:
+    // pode cachear pra sempre. O resto (imagens, manifest) fica com um dia.
+    app.use(
+      express.static(distPath, {
+        setHeaders(res, caminho) {
+          if (caminho.includes(`${path.sep}assets${path.sep}`)) {
+            res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+          } else if (!caminho.endsWith("index.html")) {
+            res.setHeader("Cache-Control", "public, max-age=86400");
+          }
+        },
+      })
+    );
+
     app.get("*", (req, res) => {
+      // O index.html nao pode ser cacheado: e ele que aponta para o bundle novo
+      // depois de cada deploy.
+      res.setHeader("Cache-Control", "no-cache");
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
