@@ -1,12 +1,12 @@
--- Schema do Pedro Deyrot (migrado do Firebase Firestore)
+-- Schema do Pedro Deyrot
 -- Aplicado automaticamente no boot do servidor (server/db.ts -> runMigrations)
--- IDs sao TEXT para preservar os document IDs originais do Firestore.
+-- IDs sao TEXT: gerados por gen_random_uuid() e comparados como texto.
 
 -- gen_random_uuid() e nativo desde o Postgres 13, entao nao precisa de pgcrypto
 -- (e CREATE EXTENSION exigiria superusuario em parte dos provedores).
 
 -- ---------------------------------------------------------------------------
--- Administradores (substitui o Firebase Auth)
+-- Administradores
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS admin_users (
     id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
 );
 
 -- ---------------------------------------------------------------------------
--- Arquivos (substitui o Firebase Storage) - PDFs e imagens guardados em bytea
+-- Arquivos - PDFs e imagens guardados em bytea
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS arquivos (
     id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS arquivos (
 );
 
 -- ---------------------------------------------------------------------------
--- Eventos (Firestore: colecao "eventos")
+-- Eventos
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS eventos (
     id                       TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS eventos (
     criado_em                TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Inscricoes de eventos (Firestore: subcolecao "eventos/{id}/dadospessoas")
+-- Inscricoes de eventos
 CREATE TABLE IF NOT EXISTS evento_inscricoes (
     id             TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     evento_id      TEXT NOT NULL REFERENCES eventos(id) ON DELETE CASCADE,
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS evento_inscricoes (
 CREATE INDEX IF NOT EXISTS idx_evento_inscricoes_evento ON evento_inscricoes (evento_id);
 
 -- ---------------------------------------------------------------------------
--- Denuncias / dossies (Firestore: colecao "denuncias")
+-- Denuncias / dossies
 -- O mapa "estatisticas" virou colunas, para permitir UPDATE atomico.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS denuncias (
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS denuncias (
 );
 CREATE INDEX IF NOT EXISTS idx_denuncias_status ON denuncias (status);
 
--- Leads das denuncias (Firestore: subcolecao "denuncias/{slug}/leads")
+-- Leads das denuncias
 CREATE TABLE IF NOT EXISTS denuncia_leads (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     denuncia_id  TEXT REFERENCES denuncias(id) ON DELETE CASCADE,
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS denuncia_leads (
 );
 CREATE INDEX IF NOT EXISTS idx_denuncia_leads_denuncia ON denuncia_leads (denuncia_id);
 
--- Formulario de acesso as denuncias (Firestore: colecao "denuncias_formulario")
+-- Formulario de acesso as denuncias
 CREATE TABLE IF NOT EXISTS denuncia_formulario_acessos (
     id         TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     nome       TEXT NOT NULL DEFAULT '',
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS denuncia_formulario_acessos (
 CREATE INDEX IF NOT EXISTS idx_denuncia_form_email ON denuncia_formulario_acessos (lower(email));
 
 -- ---------------------------------------------------------------------------
--- Campanhas (Firestore: colecao "campanhas")
+-- Campanhas
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS campanhas (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS campanhas (
 );
 
 -- ---------------------------------------------------------------------------
--- Voluntarios (Firestore: colecao "voluntarios")
+-- Voluntarios
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS voluntarios (
     id             TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS voluntarios (
 );
 
 -- ---------------------------------------------------------------------------
--- Assinaturas do abaixo-assinado (Firestore: "abaixo_assinado_assinaturas")
+-- Assinaturas do abaixo-assinado
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS abaixo_assinado_assinaturas (
     id         TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,

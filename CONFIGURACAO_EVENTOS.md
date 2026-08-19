@@ -80,7 +80,7 @@ Você pode editar qualquer evento a qualquer momento:
 
 ---
 
-## 🔧 Configuração Manual no Firestore (Avançado)
+## 🔧 Configuração Manual no Banco (Avançado)
 
 Se preferir configurar diretamente no banco de dados:
 
@@ -123,7 +123,7 @@ Se preferir configurar diretamente no banco de dados:
 
 **Comportamento:**
 - ✅ Botão "Quero Participar" abre formulário no site
-- ✅ Dados salvos no Firestore e Google Sheets
+- ✅ Dados salvos no Postgres e no Google Sheets
 - ✅ Contador de vagas (se `metaInscricoes` > 0)
 
 ---
@@ -217,7 +217,7 @@ Adicione botões extras ao evento:
 
 ### Desabilitar Formulário Interno (Usar Externo)
 
-1. Acesse o documento do evento no Firestore
+1. Acesse o evento no painel /admin
 2. Adicione/edite o campo:
    - **Nome**: `inscricaoHabilitada`
    - **Tipo**: `boolean`
@@ -234,7 +234,7 @@ Adicione botões extras ao evento:
 
 ### Adicionar Limite de Vagas
 
-1. Acesse o documento do evento no Firestore
+1. Acesse o evento no painel /admin
 2. Adicione/edite o campo:
    - **Nome**: `metaInscricoes`
    - **Tipo**: `number`
@@ -247,7 +247,7 @@ Adicione botões extras ao evento:
 
 ### Reativar Formulário Interno
 
-1. Acesse o documento do evento no Firestore
+1. Acesse o evento no painel /admin
 2. Edite o campo `inscricaoHabilitada` para `true`
 3. (Opcional) Remova o campo `linkFormularioExterno`
 4. Salve as alterações
@@ -265,11 +265,11 @@ No Painel Administrativo, a lista de eventos mostra:
 - Cards com título, imagem e botões de ação
 - Você pode editar ou excluir eventos
 
-### Ver Dados dos Inscritos no Firestore
+### Ver Dados dos Inscritos
 
-**Firebase Console:**
-```
-Firestore → eventos → [ID do Evento] → dadospessoas
+**No banco:**
+```sql
+SELECT * FROM evento_inscricoes WHERE evento_id = '<id do evento>';
 ```
 
 O número de documentos na subcoleção `dadospessoas` é o total de inscritos.
@@ -337,7 +337,7 @@ Link Externo: https://forms.gle/seu-link
 
 3. **Formulário Externo**: Quando usa `inscricaoHabilitada: false`, você é responsável por gerenciar as inscrições externamente. O sistema não contará essas inscrições.
 
-4. **Alterações em Tempo Real**: Mudanças no Firestore refletem imediatamente no site (após refresh da página).
+4. **Alterações em Tempo Real**: Mudanças no banco refletem imediatamente no site (após refresh da página).
 
 ---
 
@@ -352,7 +352,7 @@ Link Externo: https://forms.gle/seu-link
   slug: "reuniao-comunitaria",
   link: "https://exemplo.com/info",
   descricao: "Venha participar!",
-  criadoEm: firebase.firestore.Timestamp.now()
+  criadoEm: new Date()
 }
 ```
 
@@ -371,7 +371,7 @@ Link Externo: https://forms.gle/seu-link
   ],
   metaInscricoes: 200,
   inscricaoHabilitada: true,
-  criadoEm: firebase.firestore.Timestamp.now()
+  criadoEm: new Date()
 }
 ```
 
@@ -379,4 +379,4 @@ Link Externo: https://forms.gle/seu-link
 
 ## 📞 Suporte
 
-Para dúvidas sobre configuração, consulte a documentação do Firebase ou entre em contato com o suporte técnico.
+Para dúvidas sobre configuração, use o painel `/admin` ou entre em contato com o suporte técnico.

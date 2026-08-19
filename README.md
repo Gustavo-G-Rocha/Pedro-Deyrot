@@ -26,7 +26,7 @@ de migration.
 | `npm run build` | build de produção do front em `dist/` |
 | `npm start` | sobe em produção (serve `dist/` + API) |
 | `npm run lint` | checagem de tipos (`tsc --noEmit`) |
-| `npm run migrar` | copia os dados do Firebase para o Postgres (uma vez só) |
+| `npm run seed-denuncias` | cria as denúncias a partir dos PDFs de uma pasta local |
 | `npm run db:check` | mostra a contagem de cada tabela |
 
 ## Estrutura
@@ -38,7 +38,7 @@ server/
   auth.ts              JWT e o middleware exigirAdmin
   routes/              endpoints REST (auth, arquivos, eventos, denuncias, campanhas, voluntarios)
 scripts/
-  migrar-firestore.ts  migração Firebase -> Postgres
+  seed-denuncias.ts    popula as denúncias a partir de PDFs locais
 src/
   lib/api.ts           cliente REST usado por todas as páginas
   pages/               telas públicas e administrativas
@@ -47,5 +47,5 @@ server.ts              monta a API e serve o front
 
 ## Deploy
 
-Veja [RAILWAY.md](RAILWAY.md) — inclui as variáveis de ambiente, como ligar o Postgres
-ao serviço do site e o passo a passo da migração dos dados.
+Veja [RAILWAY.md](RAILWAY.md) — inclui as variáveis de ambiente e como ligar o Postgres
+ao serviço do site.

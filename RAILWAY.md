@@ -1,7 +1,7 @@
 # Deploy no Railway
 
 O site agora roda como **um único serviço Node** (Express servindo a API + o build do Vite),
-com **Postgres** como banco. Não há mais Firebase.
+com **Postgres** como banco.
 
 ---
 
@@ -76,50 +76,41 @@ Use a porta que o Railway sugerir (ele detecta pela variável `PORT`).
 
 ---
 
-## 5. Copiar os dados do Firebase para o Postgres
+## 5. Popular as denúncias
 
-Isso roda **da sua máquina**, uma vez só.
+O schema é aplicado sozinho no boot, mas as denúncias precisam ser cadastradas.
+Dá pra fazer pelo painel `/admin` (uma a uma, subindo o PDF) ou de uma vez pelo
+script, que roda **da sua máquina**.
 
-**a)** Baixe a chave da conta de serviço:
-Firebase Console → ⚙️ Configurações do projeto → **Contas de serviço** →
-**Gerar nova chave privada**. Salve na raiz do projeto como `firebase-service-account.json`
-(já está no `.gitignore` — não suba isso pro GitHub).
+**a)** Pegue a URL pública do banco: serviço **Postgres** no Railway → **Variables** →
+copie o valor de **`DATABASE_PUBLIC_URL`** (a que tem `proxy.rlwy.net`; a
+`.railway.internal` só resolve dentro do Railway).
 
-**b)** Pegue a URL pública do banco: serviço **Postgres** no Railway → **Variables** →
-copie o valor de **`DATABASE_PUBLIC_URL`** (a pública, porque você está conectando de fora).
-
-**c)** Crie um `.env` local:
+**b)** Crie um `.env` local com **apenas** essa linha:
 
 ```bash
 DATABASE_URL=<cole a DATABASE_PUBLIC_URL aqui>
-JWT_SECRET=qualquer-coisa-nao-importa-pra-migracao
 ```
 
-**d)** Rode:
+Não coloque `ADMIN_EMAIL`/`ADMIN_PASSWORD` nesse `.env`: o script aplica as migrations
+e essas variáveis reescreveriam a senha do admin em produção.
+
+**c)** Deixe os PDFs numa pasta e rode:
 
 ```bash
 npm install
-npm run migrar
+npm run seed-denuncias                 # simulação, não grava nada
+npm run seed-denuncias -- --aplicar    # grava
 ```
 
-O script cria as tabelas, copia todas as coleções do Firestore preservando os IDs
-originais, e **baixa cada PDF/imagem do Firebase Storage direto pra tabela `arquivos`**,
-reescrevendo as URLs. Ele é idempotente: rodar duas vezes não duplica nada.
+Outra pasta: `npm run seed-denuncias -- --aplicar "C:/caminho/da/pasta"`.
 
-### Só as denúncias, sem a chave do Firebase
+O script casa cada PDF com a denúncia pelo nome do arquivo (ignorando o prefixo de
+timestamp), grava o binário na tabela `arquivos` e aponta a denúncia para
+`/api/arquivos/<id>`, com as datas originais — é a data que define a ordem da listagem.
+É idempotente: rodar duas vezes não duplica arquivo nem zera os contadores.
 
-Se você quer apenas os dossiês (e não os leads), há um caminho mais curto que não
-precisa da service account:
-
-```bash
-npm run importar-denuncias
-```
-
-Ele lê pela API REST pública do Firestore e baixa os PDFs pelas URLs assinadas que já
-estão nos documentos. Traz as 10 denúncias com PDF, capa e estatísticas preservadas.
-Os leads não vêm por aqui — as regras do Firestore exigem login para lê-los.
-
-**e)** Confira o resultado:
+**d)** Confira o resultado:
 
 ```bash
 npm run db:check
@@ -129,15 +120,15 @@ Mostra a contagem de cada tabela e as denúncias com seus PDFs.
 
 ---
 
-## 6. O que mudou em relação ao Firebase
+## 6. Como os dados são guardados
 
-| Antes | Agora |
+| O quê | Onde |
 |---|---|
-| Firestore (7 coleções) | Postgres (10 tabelas, `db/schema.sql`) |
-| Firebase Auth | JWT + bcrypt na tabela `admin_users` |
-| Firebase Storage | tabela `arquivos` (bytea), servida em `/api/arquivos/:id` |
-| `firestore.rules` | middleware `exigirAdmin` nas rotas de escrita |
-| Cloudflare Pages / Vercel | Railway (`railway.json`) |
+| conteúdo do site | Postgres (10 tabelas, `db/schema.sql`) |
+| login do admin | JWT + bcrypt na tabela `admin_users` |
+| PDFs e imagens | tabela `arquivos` (bytea), servida em `/api/arquivos/:id` |
+| proteção de escrita | middleware `exigirAdmin` nas rotas |
+| hospedagem | Railway (`railway.json`) |
 
 O schema é aplicado automaticamente no boot (`runMigrations`), então não existe passo
 manual de migration — subir o deploy já deixa o banco pronto.

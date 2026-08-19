@@ -1,12 +1,12 @@
 /**
- * Cliente da API REST — substitui o Firestore/Storage/Auth do Firebase.
+ * Cliente da API REST do proprio site (Postgres via /api).
  * Tudo relativo ao proprio host, entao funciona igual em dev e no Railway.
  */
 
 const TOKEN_KEY = "admin_token";
 
 // ---------------------------------------------------------------------------
-// Sessao do admin (substitui o Firebase Auth)
+// Sessao do admin
 // ---------------------------------------------------------------------------
 
 export const sessao = {
