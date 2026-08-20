@@ -209,7 +209,7 @@ export default function Voluntarios() {
             <div
                 className="absolute inset-0 z-0 bg-cover bg-center hidden md:block"
                 style={{
-                    backgroundImage: `url('/voluntario-fundo.png')`
+                    backgroundImage: `url('/voluntario-fundo.webp')`
                 }}
             />
 
@@ -221,7 +221,7 @@ export default function Voluntarios() {
                 container para a imagem sangrar de ponta a ponta. */}
             <div className="md:hidden relative -mx-4 -mt-4 mb-6">
                 <img
-                    src="/voluntario-fundo.png"
+                    src="/voluntario-fundo.webp"
                     alt="Voluntários da campanha de Pedro Deyrot"
                     className="block w-full"
                 />
@@ -237,7 +237,7 @@ export default function Voluntarios() {
                     {/* Lockup 1414 inteiro (o "Pedro Deyrot" do topo e branco,
                         por isso so aparece sobre fundo escuro). Nada de recorte. */}
                     <img
-                        src="/voluntario-lockup.png"
+                        src="/voluntario-lockup.webp"
                         alt="Pedro Deyrot 1414 - Deputado Federal"
                         className="lg:hidden block w-full max-w-[17rem] mx-auto mb-4"
                     />
