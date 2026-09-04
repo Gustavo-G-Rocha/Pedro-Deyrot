@@ -146,12 +146,18 @@ export default function Eventos() {
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
                                 className="group relative bg-[#242424]/80 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 hover:border-[#eab308]/50 transition-all hover:shadow-2xl hover:shadow-[#eab308]/20 text-left w-full cursor-pointer"
                             >
-                                <div className="aspect-[4/5] overflow-hidden bg-zinc-900 flex items-center justify-center">
-                                    <img
-                                        src={evento.imagemUrl}
-                                        alt={evento.titulo}
-                                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                                    />
+                                <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900 flex items-center justify-center">
+                                    {/* Placeholder atras da imagem: se o flyer ainda nao
+                                        foi enviado, aparece isto em vez de imagem quebrada. */}
+                                    <Calendar className="w-16 h-16 text-zinc-700" />
+                                    {evento.imagemUrl && (
+                                        <img
+                                            src={evento.imagemUrl}
+                                            alt={evento.titulo}
+                                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                            className="absolute inset-0 w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                    )}
                                 </div>
                                 <div className="p-6">
                                     <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#eab308] transition-colors">

@@ -211,6 +211,9 @@ async function startServer() {
   // reinicia em loop e o motivo real nunca aparece.
   try {
     await runMigrations();
+    // Primeira subida com a agenda vazia: cadastra os eventos ja divulgados.
+    const { seedEventos } = await import("./server/seed-eventos.js");
+    await seedEventos();
     estadoMigracao = "ok";
   } catch (e) {
     estadoMigracao = "falhou";

@@ -299,12 +299,16 @@ export default function EventoView() {
                     className="bg-[#242424]/80 backdrop-blur-md sm:rounded-2xl overflow-hidden border-y sm:border border-white/10"
                 >
                     {/* Imagem do Evento */}
-                    <div className="min-h-[70vh] sm:min-h-[60vh] md:min-h-0 md:aspect-video w-full overflow-hidden bg-zinc-900 flex items-center justify-center">
-                        <img
-                            src={evento.imagemUrl}
-                            alt={evento.titulo}
-                            className="w-full h-full object-contain"
-                        />
+                    <div className="relative min-h-[70vh] sm:min-h-[60vh] md:min-h-0 md:aspect-video w-full overflow-hidden bg-zinc-900 flex items-center justify-center">
+                        <Calendar className="w-20 h-20 text-zinc-700" />
+                        {evento.imagemUrl && (
+                            <img
+                                src={evento.imagemUrl}
+                                alt={evento.titulo}
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                className="absolute inset-0 w-full h-full object-contain"
+                            />
+                        )}
                     </div>
 
                     {/* Conteúdo */}
