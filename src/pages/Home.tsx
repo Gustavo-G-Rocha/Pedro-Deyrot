@@ -54,7 +54,7 @@ export default function Home() {
                     </p>
                     <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed">
                         Renan Santos leva a Missão à Presidência. Pedro Deyrot leva o Paraná
-                        junto — e a bancada que esse governo vai precisar.
+                        junto, e a bancada que esse governo vai precisar.
                     </p>
                 </motion.div>
 

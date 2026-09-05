@@ -138,7 +138,7 @@ export default function Propostas() {
                                 Todo partido promete; a Missão escreveu. São mais de 400 páginas
                                 de diagnóstico e proposta, inscritas no estatuto do partido para
                                 serem cobradas. É de lá que sai o que o Pedro defende em Brasília
-                                — e o que o Renan defende na Presidência.
+                                e o que o Renan defende na Presidência.
                             </p>
                             <div className="mt-8 flex flex-wrap gap-4">
                                 <a

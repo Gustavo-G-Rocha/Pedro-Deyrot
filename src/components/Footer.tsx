@@ -24,7 +24,7 @@ export default function Footer() {
                             <span className="text-white/40">1414</span>
                         </p>
                         <p className="mt-4 max-w-md text-white/60 leading-relaxed">
-                            Candidato a Deputado Federal pelo Paraná, pelo Partido Missão — o 14
+                            Candidato a Deputado Federal pelo Paraná, pelo Partido Missão, o 14
                             de Renan Santos. O futuro é glorioso, e ele começa aqui.
                         </p>
                         <div aria-hidden="true" className="mt-6 flex gap-2">

@@ -23,7 +23,7 @@ export const trajetoria: MarcoTrajetoria[] = [
         ano: '2014',
         titulo: 'Fundação do MBL',
         texto:
-            'Cofunda o Movimento Brasil Livre ao lado de Renan Santos e Kim Kataguiri — o maior movimento político jovem da história do país.',
+            'Cofunda o Movimento Brasil Livre ao lado de Renan Santos e Kim Kataguiri, o maior movimento político jovem da história do país.',
         destaque: true
     },
     {
