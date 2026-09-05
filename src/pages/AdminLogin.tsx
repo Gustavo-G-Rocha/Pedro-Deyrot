@@ -31,15 +31,15 @@ export default function AdminLogin() {
     };
 
     return (
-        <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center p-4">
+        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md bg-[#242424] rounded-2xl shadow-2xl p-8 border border-white/10"
+                className="w-full max-w-md bg-[#111111] rounded-2xl shadow-2xl p-8 border border-white/10"
             >
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-[#eab308]/20 rounded-full mb-4">
-                        <Lock className="w-8 h-8 text-[#eab308]" />
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-[#D4A017]/20 rounded-full mb-4">
+                        <Lock className="w-8 h-8 text-[#D4A017]" />
                     </div>
                     <h1 className="text-3xl font-black text-white mb-2">Área Administrativa</h1>
                     <p className="text-zinc-400 text-sm">Faça login para gerenciar eventos</p>
@@ -59,7 +59,7 @@ export default function AdminLogin() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="admin@exemplo.com"
-                                className="w-full bg-[#1a1a1a] text-white rounded-xl p-4 pl-12 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-500"
+                                className="w-full bg-[#0a0a0a] text-white rounded-xl p-4 pl-12 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-500"
                             />
                         </div>
                     </div>
@@ -77,7 +77,7 @@ export default function AdminLogin() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="••••••••"
-                                className="w-full bg-[#1a1a1a] text-white rounded-xl p-4 pl-12 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-500"
+                                className="w-full bg-[#0a0a0a] text-white rounded-xl p-4 pl-12 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-500"
                             />
                         </div>
                     </div>
@@ -96,7 +96,7 @@ export default function AdminLogin() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-[#eab308] text-black hover:bg-[#ca8a04] active:scale-[0.98] transition-all py-4 rounded-xl font-black flex items-center justify-center gap-2 disabled:opacity-70 shadow-lg shadow-yellow-500/20"
+                        className="w-full bg-[#D4A017] text-black hover:bg-[#ca8a04] active:scale-[0.98] transition-all py-4 rounded-xl font-black flex items-center justify-center gap-2 disabled:opacity-70 shadow-lg shadow-yellow-500/20"
                     >
                         {loading ? (
                             <Loader2 className="w-5 h-5 animate-spin" />

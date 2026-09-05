@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Home, Users, Calendar, ClipboardList, Package } from 'lucide-react';
-import { materialHref } from '../config/links';
+import { Home, Users, Calendar, ClipboardList, Package, Flag } from 'lucide-react';
+import { materialHref, RENAN_SITE } from '../config/links';
+import Footer from './Footer';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function Layout() {
@@ -18,13 +19,17 @@ export default function Layout() {
     return (
         <div className="min-h-screen">
             {/* Header com menu de navegação */}
-            <header className="fixed top-0 left-0 right-0 z-40 bg-[#242424]/90 backdrop-blur-md border-b border-white/10">
+            <header className="fixed top-0 left-0 right-0 z-40 bg-[#111111]/90 backdrop-blur-md border-b border-white/10">
                 <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="relative flex items-center justify-between h-16">
                         {/* Logo centralizada no mobile, à esquerda no desktop */}
                         <Link to="/" className="flex items-center flex-shrink-0 mx-auto md:mx-0">
                             <span className="text-2xl font-black text-white">
-                                Pedro <span className="text-[#eab308]">Deyrot</span>
+                                Pedro <span className="text-[#D4A017]">Deyrot</span>
+                            </span>
+                            {/* O numero na logo: e o que o eleitor digita na urna. */}
+                            <span className="ml-2 rounded bg-[#D4A017] px-1.5 py-0.5 text-sm font-black text-black">
+                                1414
                             </span>
                         </Link>
 
@@ -34,10 +39,20 @@ export default function Layout() {
                                 href={materialHref}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 rounded-full bg-[#eab308] px-4 py-2 text-sm font-bold uppercase tracking-wider text-black transition-all hover:brightness-110"
+                                className="inline-flex items-center gap-2 rounded-full bg-[#D4A017] px-4 py-2 text-sm font-bold uppercase tracking-wider text-black transition-all hover:brightness-110"
                             >
                                 <Package className="w-4 h-4" />
                                 Pedir kit
+                            </a>
+
+                            <a
+                                href={RENAN_SITE}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 rounded-full border border-[#D4A017]/50 px-4 py-2 text-sm font-bold uppercase tracking-wider text-[#D4A017] transition-all hover:bg-[#D4A017] hover:text-black"
+                            >
+                                <Flag className="w-4 h-4" />
+                                Renan 14
                             </a>
 
                             {navLinks.map((link) => (
@@ -45,8 +60,8 @@ export default function Layout() {
                                     key={link.path}
                                     to={link.path}
                                     className={`text-sm font-semibold uppercase tracking-wider transition-colors ${isActive(link.path)
-                                        ? 'text-[#eab308]'
-                                        : 'text-white hover:text-[#eab308]'
+                                        ? 'text-[#D4A017]'
+                                        : 'text-white hover:text-[#D4A017]'
                                         }`}
                                 >
                                     {link.label}
@@ -59,7 +74,7 @@ export default function Layout() {
                             href={materialHref}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="md:hidden absolute right-0 inline-flex items-center gap-1.5 rounded-full bg-[#eab308] px-3 py-2 text-xs font-bold uppercase tracking-wider text-black transition-all active:brightness-110"
+                            className="md:hidden absolute right-0 inline-flex items-center gap-1.5 rounded-full bg-[#D4A017] px-3 py-2 text-xs font-bold uppercase tracking-wider text-black transition-all active:brightness-110"
                         >
                             <Package className="w-4 h-4" />
                             Kit
@@ -69,7 +84,7 @@ export default function Layout() {
             </header>
 
             {/* Mobile Bottom Navigation */}
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1a1a1a]/95 backdrop-blur-lg border-t border-white/10 pb-[env(safe-area-inset-bottom)]">
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-lg border-t border-white/10 pb-[env(safe-area-inset-bottom)]">
                 <div className="flex items-center justify-around h-16 px-2">
                     {navLinks.map((link) => {
                         const Icon = link.icon;
@@ -78,10 +93,10 @@ export default function Layout() {
                             <Link
                                 key={link.path}
                                 to={link.path}
-                                className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${active ? 'text-[#eab308]' : 'text-zinc-500 hover:text-zinc-300'
+                                className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${active ? 'text-[#D4A017]' : 'text-zinc-500 hover:text-zinc-300'
                                     }`}
                             >
-                                <Icon className={`w-5 h-5 ${active ? 'fill-[#eab308]/20' : ''}`} />
+                                <Icon className={`w-5 h-5 ${active ? 'fill-[#D4A017]/20' : ''}`} />
                                 <span className="text-[10px] font-bold tracking-wider uppercase">
                                     {link.label}
                                 </span>
@@ -104,6 +119,8 @@ export default function Layout() {
                         <Outlet />
                     </motion.div>
                 </AnimatePresence>
+
+                <Footer />
             </main>
         </div>
     );

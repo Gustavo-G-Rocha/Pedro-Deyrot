@@ -177,14 +177,14 @@ export default function AdminCampanhas() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center">
-                <Loader2 className="w-12 h-12 text-[#eab308] animate-spin" />
+            <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+                <Loader2 className="w-12 h-12 text-[#D4A017] animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#1a1a1a] py-8 px-4">
+        <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
@@ -230,18 +230,18 @@ export default function AdminCampanhas() {
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className={`bg-[#242424] rounded-2xl p-6 border ${editandoId ? 'border-[#eab308]' : 'border-white/10'}`}
+                        className={`bg-[#111111] rounded-2xl p-6 border ${editandoId ? 'border-[#D4A017]' : 'border-white/10'}`}
                     >
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-xl font-bold text-white flex items-center gap-2">
                                 {editandoId ? (
                                     <>
-                                        <Edit2 className="w-5 h-5 text-[#eab308]" />
+                                        <Edit2 className="w-5 h-5 text-[#D4A017]" />
                                         Editar Campanha
                                     </>
                                 ) : (
                                     <>
-                                        <Plus className="w-5 h-5 text-[#eab308]" />
+                                        <Plus className="w-5 h-5 text-[#D4A017]" />
                                         Nova Campanha
                                     </>
                                 )}
@@ -269,7 +269,7 @@ export default function AdminCampanhas() {
                                     value={titulo}
                                     onChange={(e) => setTitulo(e.target.value)}
                                     placeholder="Ex: Campanha de Conscientização"
-                                    className="w-full bg-[#1a1a1a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-500"
+                                    className="w-full bg-[#0a0a0a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-500"
                                 />
                             </div>
 
@@ -283,7 +283,7 @@ export default function AdminCampanhas() {
                                     onChange={(e) => setDescricao(e.target.value)}
                                     placeholder="Descreva os objetivos da campanha..."
                                     rows={4}
-                                    className="w-full bg-[#1a1a1a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-500 resize-none"
+                                    className="w-full bg-[#0a0a0a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-500 resize-none"
                                 />
                             </div>
 
@@ -297,7 +297,7 @@ export default function AdminCampanhas() {
                                         required
                                         value={dataInicio}
                                         onChange={(e) => setDataInicio(e.target.value)}
-                                        className="w-full bg-[#1a1a1a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all"
+                                        className="w-full bg-[#0a0a0a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all"
                                     />
                                 </div>
                                 <div>
@@ -309,7 +309,7 @@ export default function AdminCampanhas() {
                                         required
                                         value={dataFim}
                                         onChange={(e) => setDataFim(e.target.value)}
-                                        className="w-full bg-[#1a1a1a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all"
+                                        className="w-full bg-[#0a0a0a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all"
                                     />
                                 </div>
                             </div>
@@ -359,7 +359,7 @@ export default function AdminCampanhas() {
                                     />
                                     <label
                                         htmlFor="imagem-upload"
-                                        className="block w-full bg-[#1a1a1a] text-white rounded-xl p-4 cursor-pointer hover:bg-[#252525] transition-colors border-2 border-dashed border-zinc-700 hover:border-[#eab308]"
+                                        className="block w-full bg-[#0a0a0a] text-white rounded-xl p-4 cursor-pointer hover:bg-[#252525] transition-colors border-2 border-dashed border-zinc-700 hover:border-[#D4A017]"
                                     >
                                         <div className="flex items-center justify-center gap-2 text-zinc-400">
                                             <ImageIcon className="w-5 h-5" />
@@ -386,7 +386,7 @@ export default function AdminCampanhas() {
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="w-full bg-[#eab308] text-black hover:bg-[#ca8a04] active:scale-[0.98] transition-all py-4 rounded-xl font-black flex items-center justify-center gap-2 disabled:opacity-70 shadow-lg shadow-yellow-500/20"
+                                className="w-full bg-[#D4A017] text-black hover:bg-[#ca8a04] active:scale-[0.98] transition-all py-4 rounded-xl font-black flex items-center justify-center gap-2 disabled:opacity-70 shadow-lg shadow-yellow-500/20"
                             >
                                 {saving ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -406,7 +406,7 @@ export default function AdminCampanhas() {
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="bg-[#242424] rounded-2xl p-6 border border-white/10"
+                        className="bg-[#111111] rounded-2xl p-6 border border-white/10"
                     >
                         <h2 className="text-xl font-bold text-white mb-4">
                             Campanhas Cadastradas ({campanhas.length})
@@ -421,7 +421,7 @@ export default function AdminCampanhas() {
                                         key={campanha.id}
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="bg-[#1a1a1a] rounded-xl p-4 border border-white/5 hover:border-[#eab308]/30 transition-colors"
+                                        className="bg-[#0a0a0a] rounded-xl p-4 border border-white/5 hover:border-[#D4A017]/30 transition-colors"
                                     >
                                         <div className="flex gap-4">
                                             <div className="w-24 h-24 bg-zinc-900 rounded-lg flex-shrink-0 overflow-hidden">
@@ -458,7 +458,7 @@ export default function AdminCampanhas() {
                                             <div className="flex flex-col gap-2">
                                                 <button
                                                     onClick={() => handleEditar(campanha)}
-                                                    className="p-2 hover:bg-[#eab308]/10 text-[#eab308] rounded-lg transition-colors"
+                                                    className="p-2 hover:bg-[#D4A017]/10 text-[#D4A017] rounded-lg transition-colors"
                                                     title="Editar campanha"
                                                 >
                                                     <Edit2 className="w-5 h-5" />

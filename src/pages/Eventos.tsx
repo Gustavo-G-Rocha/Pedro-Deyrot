@@ -61,7 +61,7 @@ export default function Eventos() {
     };
 
     return (
-        <div className="min-h-screen bg-[#1a1a1a]">
+        <div className="min-h-screen bg-[#0a0a0a]">
             {/* Conteúdo */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                 <motion.div
@@ -70,11 +70,15 @@ export default function Eventos() {
                     transition={{ duration: 0.8 }}
                     className="text-center mb-12"
                 >
-                    <h1 className="text-4xl md:text-6xl font-black text-white mb-4">
-                        Nossos <span className="text-[#eab308]">Eventos</span>
+                    <p className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-[#D4A017]">
+                        Agenda da Missão no Paraná
+                    </p>
+                    <h1 className="text-4xl md:text-6xl font-black text-white mb-4 uppercase tracking-tight">
+                        Nossos <span className="text-[#D4A017]">Eventos</span>
                     </h1>
                     <p className="text-xl text-zinc-300 max-w-2xl mx-auto">
-                        Participe dos nossos encontros e eventos. Venha nos conhecer!
+                        A campanha se faz na rua. Veja onde o 1414 vai estar e venha construir o
+                        futuro glorioso com a gente.
                     </p>
                 </motion.div>
 
@@ -91,7 +95,7 @@ export default function Eventos() {
                         placeholder="Pesquisar por título de evento..."
                         value={busca}
                         onChange={(e) => setBusca(e.target.value)}
-                        className="w-full bg-[#242424] text-white rounded-xl p-4 pl-12 focus:ring-2 focus:ring-[#eab308] border border-white/10 outline-none transition-all placeholder:text-zinc-500"
+                        className="w-full bg-[#111111] text-white rounded-xl p-4 pl-12 focus:ring-2 focus:ring-[#D4A017] border border-white/10 outline-none transition-all placeholder:text-zinc-500"
                     />
                 </motion.div>
 
@@ -99,7 +103,7 @@ export default function Eventos() {
                 {loading ? (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[1, 2, 3, 4, 5, 6].map(i => (
-                            <div key={i} className="bg-[#242424] rounded-2xl border border-white/10 overflow-hidden animate-pulse">
+                            <div key={i} className="bg-[#111111] rounded-2xl border border-white/10 overflow-hidden animate-pulse">
                                 <div className="aspect-[4/5] bg-zinc-800"></div>
                                 <div className="p-6 space-y-4">
                                     <div className="h-6 bg-zinc-800 rounded w-3/4"></div>
@@ -123,8 +127,8 @@ export default function Eventos() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="max-w-4xl mx-auto"
                     >
-                        <div className="bg-[#242424]/70 backdrop-blur-md rounded-2xl p-12 border border-white/10 text-center">
-                            <Calendar className="w-20 h-20 text-[#eab308] mx-auto mb-6" />
+                        <div className="bg-[#111111]/70 backdrop-blur-md rounded-2xl p-12 border border-white/10 text-center">
+                            <Calendar className="w-20 h-20 text-[#D4A017] mx-auto mb-6" />
                             <h2 className="text-3xl font-bold text-white mb-4">Em breve!</h2>
                             <p className="text-zinc-400 text-lg">
                                 Estamos organizando nossos eventos. Em breve você encontrará aqui
@@ -144,7 +148,7 @@ export default function Eventos() {
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                                className="group relative bg-[#242424]/80 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 hover:border-[#eab308]/50 transition-all hover:shadow-2xl hover:shadow-[#eab308]/20 text-left w-full cursor-pointer"
+                                className="group relative bg-[#111111]/80 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 hover:border-[#D4A017]/50 transition-all hover:shadow-2xl hover:shadow-[#D4A017]/20 text-left w-full cursor-pointer"
                             >
                                 <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900 flex items-center justify-center">
                                     {/* Placeholder atras da imagem: se o flyer ainda nao
@@ -160,7 +164,7 @@ export default function Eventos() {
                                     )}
                                 </div>
                                 <div className="p-6">
-                                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#eab308] transition-colors">
+                                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#D4A017] transition-colors">
                                         {evento.titulo}
                                     </h3>
 
@@ -173,7 +177,7 @@ export default function Eventos() {
                                                     Esgotado
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#eab308]/10 text-[#eab308] text-xs font-semibold rounded-full border border-[#eab308]/20">
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#D4A017]/10 text-[#D4A017] text-xs font-semibold rounded-full border border-[#D4A017]/20">
                                                     <Users className="w-3.5 h-3.5" />
                                                     {(evento.metaInscricoes ?? 0) - (evento.totalInscricoes || 0)} {(evento.metaInscricoes ?? 0) - (evento.totalInscricoes || 0) === 1 ? 'vaga' : 'vagas'}
                                                 </span>
@@ -186,13 +190,13 @@ export default function Eventos() {
                                             <Calendar className="w-4 h-4" />
                                             <span>{evento.criadoEm.toLocaleDateString('pt-BR')}</span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-[#eab308] text-sm">
+                                        <div className="flex items-center gap-2 text-[#D4A017] text-sm">
                                             <ExternalLink className="w-4 h-4" />
                                             <span>Ver detalhes</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="absolute top-4 right-4 bg-[#eab308] text-black px-3 py-1 rounded-full text-xs font-bold">
+                                <div className="absolute top-4 right-4 bg-[#D4A017] text-black px-3 py-1 rounded-full text-xs font-bold">
                                     Evento
                                 </div>
                             </motion.button>

@@ -182,14 +182,14 @@ export default function AdminDenunciaEditor() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center">
-                <Loader2 className="w-12 h-12 text-[#eab308] animate-spin" />
+            <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+                <Loader2 className="w-12 h-12 text-[#D4A017] animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#1a1a1a] py-8 px-4">
+        <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
@@ -245,7 +245,7 @@ export default function AdminDenunciaEditor() {
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="bg-[#242424] rounded-2xl p-6 border border-white/10"
+                        className="bg-[#111111] rounded-2xl p-6 border border-white/10"
                     >
                         <form onSubmit={handleSalvar} className="space-y-6">
                             {/* Título */}
@@ -259,7 +259,7 @@ export default function AdminDenunciaEditor() {
                                     value={titulo}
                                     onChange={(e) => setTitulo(e.target.value)}
                                     placeholder="Ex: Denúncia contra João Silva"
-                                    className="w-full bg-[#1a1a1a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-600"
+                                    className="w-full bg-[#0a0a0a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-600"
                                 />
                             </div>
 
@@ -276,7 +276,7 @@ export default function AdminDenunciaEditor() {
                                         value={slug}
                                         onChange={(e) => setSlug(e.target.value)}
                                         placeholder="denuncia-joao-silva"
-                                        className="flex-1 bg-[#1a1a1a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-600"
+                                        className="flex-1 bg-[#0a0a0a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-600"
                                     />
                                 </div>
                                 <p className="text-xs text-zinc-600 mt-1">
@@ -295,7 +295,7 @@ export default function AdminDenunciaEditor() {
                                     onChange={(e) => setDescricao(e.target.value)}
                                     placeholder="Descrição geral da denúncia..."
                                     rows={4}
-                                    className="w-full bg-[#1a1a1a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-600 resize-none"
+                                    className="w-full bg-[#0a0a0a] text-white rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-600 resize-none"
                                 />
                             </div>
 
@@ -339,11 +339,11 @@ export default function AdminDenunciaEditor() {
                                     type="button"
                                     onClick={() => setFormularioAtivo(prev => !prev)}
                                     className={`flex items-center gap-3 w-full p-4 rounded-xl border-2 transition-all ${formularioAtivo
-                                        ? 'bg-[#eab308]/10 border-[#eab308] text-white'
-                                        : 'bg-[#1a1a1a] border-zinc-700 text-zinc-400 hover:border-zinc-500'
+                                        ? 'bg-[#D4A017]/10 border-[#D4A017] text-white'
+                                        : 'bg-[#0a0a0a] border-zinc-700 text-zinc-400 hover:border-zinc-500'
                                         }`}
                                 >
-                                    <div className={`w-10 h-6 rounded-full flex items-center transition-colors ${formularioAtivo ? 'bg-[#eab308]' : 'bg-zinc-600'}`}>
+                                    <div className={`w-10 h-6 rounded-full flex items-center transition-colors ${formularioAtivo ? 'bg-[#D4A017]' : 'bg-zinc-600'}`}>
                                         <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${formularioAtivo ? 'translate-x-5' : 'translate-x-0.5'}`} />
                                     </div>
                                     <div className="text-left">
@@ -375,7 +375,7 @@ export default function AdminDenunciaEditor() {
                                     />
                                     <label
                                         htmlFor="image-upload"
-                                        className="block w-full bg-[#1a1a1a] text-white rounded-xl cursor-pointer hover:bg-[#252525] transition-colors border-2 border-dashed border-zinc-700 hover:border-[#eab308] overflow-hidden"
+                                        className="block w-full bg-[#0a0a0a] text-white rounded-xl cursor-pointer hover:bg-[#252525] transition-colors border-2 border-dashed border-zinc-700 hover:border-[#D4A017] overflow-hidden"
                                     >
                                         {imagePreview ? (
                                             <img src={imagePreview} alt="Prévia" className="w-full h-40 object-cover" />
@@ -404,7 +404,7 @@ export default function AdminDenunciaEditor() {
                                     />
                                     <label
                                         htmlFor="pdf-upload"
-                                        className="block w-full bg-[#1a1a1a] text-white rounded-xl p-4 cursor-pointer hover:bg-[#252525] transition-colors border-2 border-dashed border-zinc-700 hover:border-[#eab308]"
+                                        className="block w-full bg-[#0a0a0a] text-white rounded-xl p-4 cursor-pointer hover:bg-[#252525] transition-colors border-2 border-dashed border-zinc-700 hover:border-[#D4A017]"
                                     >
                                         <div className="flex items-center justify-center gap-2 text-zinc-400">
                                             <Upload className="w-5 h-5" />
@@ -426,7 +426,7 @@ export default function AdminDenunciaEditor() {
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="w-full bg-[#eab308] text-black hover:bg-[#ca8a04] active:scale-[0.98] transition-all py-4 rounded-xl font-black flex items-center justify-center gap-2 disabled:opacity-70 shadow-lg shadow-yellow-500/20"
+                                className="w-full bg-[#D4A017] text-black hover:bg-[#ca8a04] active:scale-[0.98] transition-all py-4 rounded-xl font-black flex items-center justify-center gap-2 disabled:opacity-70 shadow-lg shadow-yellow-500/20"
                             >
                                 {saving ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -445,10 +445,10 @@ export default function AdminDenunciaEditor() {
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-[#242424] rounded-2xl p-6 border border-white/10 max-h-[800px] overflow-y-auto"
+                            className="bg-[#111111] rounded-2xl p-6 border border-white/10 max-h-[800px] overflow-y-auto"
                         >
                             <div className="flex items-center gap-2 mb-6">
-                                <Eye className="w-5 h-5 text-[#eab308]" />
+                                <Eye className="w-5 h-5 text-[#D4A017]" />
                                 <h2 className="text-xl font-bold text-white">Prévia</h2>
                             </div>
 
@@ -464,8 +464,8 @@ export default function AdminDenunciaEditor() {
                                 </div>
 
                                 {pdfFileName && (
-                                    <div className="bg-[#1a1a1a] rounded-xl p-4 flex items-center gap-3">
-                                        <FileText className="w-8 h-8 text-[#eab308]" />
+                                    <div className="bg-[#0a0a0a] rounded-xl p-4 flex items-center gap-3">
+                                        <FileText className="w-8 h-8 text-[#D4A017]" />
                                         <div>
                                             <p className="text-white font-semibold">Documento PDF</p>
                                             <p className="text-sm text-zinc-500">{pdfFileName}</p>
@@ -474,7 +474,7 @@ export default function AdminDenunciaEditor() {
                                 )}
 
                                 {pdfUrl && !pdfFile && (
-                                    <div className="bg-[#1a1a1a] rounded-xl overflow-hidden">
+                                    <div className="bg-[#0a0a0a] rounded-xl overflow-hidden">
                                         <p className="text-xs text-zinc-500 px-4 pt-3 pb-2">Prévia do PDF atual:</p>
                                         <iframe src={`https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`} className="w-full h-96 border-0" title="Prévia do PDF" />
                                     </div>

@@ -138,14 +138,14 @@ export default function AdminDenuncias() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center">
-                <Loader2 className="w-12 h-12 text-[#eab308] animate-spin" />
+            <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+                <Loader2 className="w-12 h-12 text-[#D4A017] animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#1a1a1a] py-8 px-4">
+        <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
@@ -180,7 +180,7 @@ export default function AdminDenuncias() {
                         )}
                         <button
                             onClick={handleNovaDenuncia}
-                            className="flex items-center gap-2 px-6 py-3 bg-[#eab308] hover:bg-[#ca8a04] text-black rounded-lg transition-colors font-bold shadow-lg shadow-yellow-500/20"
+                            className="flex items-center gap-2 px-6 py-3 bg-[#D4A017] hover:bg-[#ca8a04] text-black rounded-lg transition-colors font-bold shadow-lg shadow-yellow-500/20"
                         >
                             <Plus className="w-5 h-5" />
                             Nova Denúncia
@@ -273,7 +273,7 @@ export default function AdminDenuncias() {
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="bg-[#242424] rounded-2xl p-12 border border-white/10 text-center"
+                            className="bg-[#111111] rounded-2xl p-12 border border-white/10 text-center"
                         >
                             <FileText className="w-16 h-16 text-zinc-600 mx-auto mb-4" />
                             <h3 className="text-xl font-bold text-white mb-2">
@@ -288,7 +288,7 @@ export default function AdminDenuncias() {
                             {denuncias.length === 0 && (
                                 <button
                                     onClick={handleNovaDenuncia}
-                                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#eab308] hover:bg-[#ca8a04] text-black rounded-lg transition-colors font-bold"
+                                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A017] hover:bg-[#ca8a04] text-black rounded-lg transition-colors font-bold"
                                 >
                                     <Plus className="w-5 h-5" />
                                     Criar Primeira Denúncia
@@ -301,7 +301,7 @@ export default function AdminDenuncias() {
                                 key={denuncia.id}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="bg-[#242424] rounded-xl p-6 border border-white/10 hover:border-[#eab308]/30 transition-colors"
+                                className="bg-[#111111] rounded-xl p-6 border border-white/10 hover:border-[#D4A017]/30 transition-colors"
                             >
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex-1 min-w-0">
@@ -329,7 +329,7 @@ export default function AdminDenuncias() {
                                             </span>
                                             <span
                                                 className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${denuncia.formularioAtivo
-                                                    ? 'bg-[#eab308]/10 text-[#eab308] border border-[#eab308]/20'
+                                                    ? 'bg-[#D4A017]/10 text-[#D4A017] border border-[#D4A017]/20'
                                                     : 'bg-zinc-800 text-zinc-500 border border-zinc-700'
                                                     }`}
                                             >
@@ -343,12 +343,12 @@ export default function AdminDenuncias() {
                                             {denuncia.descricao || <span className="text-zinc-600 italic">Sem descrição</span>}
                                         </p>
                                         <div className="flex items-center gap-6 text-sm text-zinc-500">
-                                            <span>Slug: <span className="text-[#eab308]">/{denuncia.slug || '(vazio)'}</span></span>
+                                            <span>Slug: <span className="text-[#D4A017]">/{denuncia.slug || '(vazio)'}</span></span>
                                             <span>{denuncia.secoes?.length || 0} seção(ões)</span>
                                             <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" /> {denuncia.estatisticas?.visualizacoes || 0}</span>
                                             <span className="flex items-center gap-1"><span className="text-xs">↓</span> {denuncia.estatisticas?.downloads || 0}</span>
                                             {denuncia.formularioAtivo && (
-                                                <span className="flex items-center gap-1 text-[#eab308]">
+                                                <span className="flex items-center gap-1 text-[#D4A017]">
                                                     <Users className="w-3.5 h-3.5" /> {denuncia.estatisticas?.formularioEnvios || 0} leads
                                                 </span>
                                             )}
@@ -360,7 +360,7 @@ export default function AdminDenuncias() {
                                     <div className="flex flex-col gap-2">
                                         <button
                                             onClick={() => handleEditarDenuncia(denuncia.id)}
-                                            className="p-3 hover:bg-[#eab308]/10 text-[#eab308] rounded-lg transition-colors"
+                                            className="p-3 hover:bg-[#D4A017]/10 text-[#D4A017] rounded-lg transition-colors"
                                             title="Editar denúncia"
                                         >
                                             <Edit2 className="w-5 h-5" />

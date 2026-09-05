@@ -225,13 +225,13 @@ export default function Voluntarios() {
                     alt="Voluntários da campanha de Pedro Deyrot"
                     className="block w-full"
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[#1a1a1a]" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[#0a0a0a]" />
             </div>
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative z-10 w-full max-w-lg mx-auto md:mx-0 bg-[#242424]/70 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
+                className="relative z-10 w-full max-w-lg mx-auto md:mx-0 bg-[#111111]/70 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-10 border border-white/10"
             >
                 <header className="mb-8 text-center">
                     {/* Lockup 1414 inteiro (o "Pedro Deyrot" do topo e branco,
@@ -241,7 +241,16 @@ export default function Voluntarios() {
                         alt="Pedro Deyrot 1414 - Deputado Federal"
                         className="lg:hidden block w-full max-w-[17rem] mx-auto mb-4"
                     />
-                    <p className="text-zinc-400 text-sm font-medium">Junte-se à mudança. Seja um voluntário.</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#D4A017]">
+                        Voluntário da Missão · Paraná
+                    </p>
+                    <p className="mt-3 text-2xl font-black uppercase leading-none text-white">
+                        O futuro é <span className="text-[#D4A017]">glorioso</span>
+                    </p>
+                    <p className="mt-3 text-zinc-400 text-sm font-medium">
+                        Quem faz a campanha acontecer é voluntário. Entre para o time do 1414 e
+                        ajude a eleger a bancada do Renan no Paraná.
+                    </p>
                 </header>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -258,7 +267,7 @@ export default function Voluntarios() {
                             onChange={handleChange}
                             autoComplete="name"
                             placeholder="Digite seu nome completo"
-                            className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+                            className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                         />
                     </div>
 
@@ -272,7 +281,7 @@ export default function Voluntarios() {
                                 <button
                                     type="button"
                                     onClick={() => { setDdiOpen(o => !o); setDdiSearch(''); }}
-                                    className="h-full min-w-[72px] bg-white text-black rounded-xl px-3 py-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all shadow-sm flex items-center gap-1 cursor-pointer"
+                                    className="h-full min-w-[72px] bg-white text-black rounded-xl px-3 py-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all shadow-sm flex items-center gap-1 cursor-pointer"
                                 >
                                     <img src={flagUrl(selectedDdi.iso)} alt={selectedDdi.name} className="w-5 h-auto rounded-sm" />
                                     <span className="text-sm font-medium">{selectedDdi.code}</span>
@@ -290,7 +299,7 @@ export default function Voluntarios() {
                                                 placeholder="Buscar país..."
                                                 value={ddiSearch}
                                                 onChange={e => setDdiSearch(e.target.value)}
-                                                className="w-full text-sm text-black px-3 py-2 rounded-lg border border-zinc-200 outline-none focus:ring-2 focus:ring-[#eab308]"
+                                                className="w-full text-sm text-black px-3 py-2 rounded-lg border border-zinc-200 outline-none focus:ring-2 focus:ring-[#D4A017]"
                                             />
                                         </div>
                                         <ul className="max-h-52 overflow-y-auto">
@@ -329,7 +338,7 @@ export default function Voluntarios() {
                                 autoComplete="tel-national"
                                 inputMode="tel"
                                 placeholder="(00) 00000-0000"
-                                className="flex-1 bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+                                className="flex-1 bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                             />
                         </div>
                     </div>
@@ -348,14 +357,14 @@ export default function Voluntarios() {
                             autoComplete="email"
                             inputMode="email"
                             placeholder="exemplo@email.com"
-                            className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+                            className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                         />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-semibold text-zinc-500 uppercase mb-1 ml-1" htmlFor="cep">
-                                CEP {isSearchingCep && <Loader2 className="inline w-3 h-3 animate-spin ml-2 text-[#eab308]" />}
+                                CEP {isSearchingCep && <Loader2 className="inline w-3 h-3 animate-spin ml-2 text-[#D4A017]" />}
                             </label>
                             <input
                                 id="cep"
@@ -368,7 +377,7 @@ export default function Voluntarios() {
                                 autoComplete="postal-code"
                                 inputMode="numeric"
                                 placeholder="00000-000"
-                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                             />
                         </div>
                         <div>
@@ -384,7 +393,7 @@ export default function Voluntarios() {
                                 onChange={handleChange}
                                 autoComplete="address-level3"
                                 placeholder="Ex: Centro"
-                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                             />
                         </div>
                     </div>
@@ -401,7 +410,7 @@ export default function Voluntarios() {
                                 value={formData.estado}
                                 onChange={handleChange}
                                 autoComplete="address-level1"
-                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all appearance-none cursor-pointer shadow-sm"
+                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all appearance-none cursor-pointer shadow-sm"
                             >
                                 <option value="">Selecione o estado</option>
                                 {states.map(s => <option key={s.uf} value={s.uf}>{s.name} ({s.uf})</option>)}
@@ -420,7 +429,7 @@ export default function Voluntarios() {
                                 onChange={handleChange}
                                 autoComplete="address-level2"
                                 placeholder="Ex: Acará"
-                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+                                className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                             />
                         </div>
                     </div>
@@ -436,7 +445,7 @@ export default function Voluntarios() {
                             value={formData.especialidade}
                             onChange={handleChange}
                             placeholder="Ex: Divulgação, Edição, Panfletagem"
-                            className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#eab308] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
+                            className="w-full bg-white text-black rounded-xl p-4 focus:ring-2 focus:ring-[#D4A017] outline-none transition-all placeholder:text-zinc-300 shadow-sm"
                         />
                         <p className="text-xs text-zinc-500 mt-1 ml-1">Separe as especialidades por vírgula.</p>
                     </div>
@@ -459,7 +468,7 @@ export default function Voluntarios() {
                                     href="/LGPD"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-[#eab308] hover:text-[#ca8a04] underline cursor-pointer"
+                                    className="text-[#D4A017] hover:text-[#ca8a04] underline cursor-pointer"
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     termos e condições
@@ -483,7 +492,7 @@ export default function Voluntarios() {
                     <button
                         type="submit"
                         disabled={status === 'loading'}
-                        className="w-full mt-6 bg-[#eab308] text-black hover:bg-[#ca8a04] active:scale-[0.98] transition-all py-4 rounded-xl font-black flex items-center justify-center gap-2 group relative overflow-hidden disabled:opacity-70 shadow-lg shadow-yellow-500/20"
+                        className="w-full mt-6 bg-[#D4A017] text-black hover:bg-[#ca8a04] active:scale-[0.98] transition-all py-4 rounded-xl font-black flex items-center justify-center gap-2 group relative overflow-hidden disabled:opacity-70 shadow-lg shadow-yellow-500/20"
                     >
                         {status === 'loading' ? (
                             <Loader2 className="w-5 h-5 animate-spin" />

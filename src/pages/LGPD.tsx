@@ -1,11 +1,11 @@
 export default function LGPD() {
     return (
-        <div className="min-h-screen bg-[#242424]">
+        <div className="min-h-screen bg-[#111111]">
             {/* Header */}
-            <header className="bg-[#242424]/90 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+            <header className="bg-[#111111]/90 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                     <h1 className="text-3xl font-black text-white">
-                        Política de <span className="text-[#eab308]">Privacidade</span>
+                        Política de <span className="text-[#D4A017]">Privacidade</span>
                     </h1>
                 </div>
             </header>
@@ -23,7 +23,7 @@ export default function LGPD() {
                         <h2 className="text-2xl font-bold text-white mt-10 mb-4">Os seus direitos em relação aos dados</h2>
                         <p className="text-zinc-300 leading-relaxed mb-6">
                             Para mais informações sobre a coleta e utilização dos Dados Pessoais, bem como para o exercício de direitos, entre em contato por meio do email:{' '}
-                            <a href="mailto:pedraotomates@gmail.com" className="text-[#eab308] hover:text-[#ca8a04] underline font-semibold">
+                            <a href="mailto:pedraotomates@gmail.com" className="text-[#D4A017] hover:text-[#ca8a04] underline font-semibold">
                                 pedraotomates@gmail.com
                             </a>. Basta formular uma simples mensagem com o seu pedido. 
                         </p>
@@ -71,7 +71,7 @@ export default function LGPD() {
                         </p>
                         <p className="text-zinc-300 leading-relaxed mb-6">
                             Os Dados Pessoais serão tratados por prazo indeterminado, considerando que o objetivo é manter interação e contato constante. Caso, a qualquer tempo, você deseje solicitar a eliminação dos seus dados, poderá fazê-lo por meio do e-mail:{' '}
-                            <a href="mailto:pedraotomates@gmail.com" className="text-[#eab308] hover:text-[#ca8a04] underline font-semibold">
+                            <a href="mailto:pedraotomates@gmail.com" className="text-[#D4A017] hover:text-[#ca8a04] underline font-semibold">
                                 pedraotomates@gmail.com
                             </a>.
                         </p>
@@ -79,7 +79,7 @@ export default function LGPD() {
                         <h2 className="text-2xl font-bold text-white mt-10 mb-4">As garantias sobre os dados pessoais</h2>
                         <p className="text-zinc-300 leading-relaxed mb-4">
                             Os seus direitos previstos na LGPD (art. 18) estão listados abaixo. Você pode exercê-los a qualquer momento, por meio do e-mail:{' '}
-                            <a href="mailto:pedraotomates@gmail.com" className="text-[#eab308] hover:text-[#ca8a04] underline font-semibold">
+                            <a href="mailto:pedraotomates@gmail.com" className="text-[#D4A017] hover:text-[#ca8a04] underline font-semibold">
                                 pedraotomates@gmail.com
                             </a>.
                         </p>
@@ -111,7 +111,7 @@ export default function LGPD() {
                     <div className="mt-12 pt-8 border-t border-white/10">
                         <button
                             onClick={() => window.close()}
-                            className="w-full sm:w-auto bg-[#eab308] text-black hover:bg-[#ca8a04] active:scale-[0.98] transition-all py-3 px-8 rounded-xl font-bold uppercase tracking-wider shadow-lg shadow-yellow-500/20"
+                            className="w-full sm:w-auto bg-[#D4A017] text-black hover:bg-[#ca8a04] active:scale-[0.98] transition-all py-3 px-8 rounded-xl font-bold uppercase tracking-wider shadow-lg shadow-yellow-500/20"
                         >
                             Fechar
                         </button>

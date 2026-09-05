@@ -249,7 +249,7 @@ export default function EventoView() {
     if (loading) {
         return (
             <div className="relative min-h-screen flex items-center justify-center bg-black">
-                <Loader2 className="w-12 h-12 text-[#eab308] animate-spin" />
+                <Loader2 className="w-12 h-12 text-[#D4A017] animate-spin" />
             </div>
         );
     }
@@ -260,7 +260,7 @@ export default function EventoView() {
                 <div className="text-center">
                     <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
                     <h2 className="text-2xl text-white mb-4">Evento não encontrado</h2>
-                    <Link to="/eventos" className="text-[#eab308] hover:underline">
+                    <Link to="/eventos" className="text-[#D4A017] hover:underline">
                         Voltar para Eventos
                     </Link>
                 </div>
@@ -269,11 +269,11 @@ export default function EventoView() {
     }
 
     return (
-        <div className="min-h-screen bg-[#1a1a1a]">
+        <div className="min-h-screen bg-[#0a0a0a]">
             <div className="fixed top-2 left-2 sm:top-4 sm:left-4 z-40 flex flex-col sm:flex-row gap-2">
                 <Link
                     to="/eventos"
-                    className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-[#242424]/90 backdrop-blur-md text-white rounded-lg border border-white/10 hover:border-[#eab308]/50 transition-all shadow-lg"
+                    className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-[#111111]/90 backdrop-blur-md text-white rounded-lg border border-white/10 hover:border-[#D4A017]/50 transition-all shadow-lg"
                 >
                     <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span className="text-sm sm:text-base">Voltar</span>
@@ -283,7 +283,7 @@ export default function EventoView() {
             <div className="fixed top-2 right-2 sm:top-4 sm:right-4 z-40 flex flex-col sm:flex-row gap-2">
                 <button
                     onClick={handleShare}
-                    className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-[#eab308]/10 backdrop-blur-md text-[#eab308] rounded-lg border border-[#eab308]/30 hover:bg-[#eab308]/20 transition-all shadow-lg"
+                    className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-[#D4A017]/10 backdrop-blur-md text-[#D4A017] rounded-lg border border-[#D4A017]/30 hover:bg-[#D4A017]/20 transition-all shadow-lg"
                 >
                     <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span className="text-sm sm:text-base hidden sm:inline">Compartilhar</span>
@@ -296,7 +296,7 @@ export default function EventoView() {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="bg-[#242424]/80 backdrop-blur-md sm:rounded-2xl overflow-hidden border-y sm:border border-white/10"
+                    className="bg-[#111111]/80 backdrop-blur-md sm:rounded-2xl overflow-hidden border-y sm:border border-white/10"
                 >
                     {/* Imagem do Evento */}
                     <div className="relative min-h-[70vh] sm:min-h-[60vh] md:min-h-0 md:aspect-video w-full overflow-hidden bg-zinc-900 flex items-center justify-center">
@@ -315,7 +315,7 @@ export default function EventoView() {
                     <div className="p-4 sm:p-8 md:p-12">
                         {/* Título */}
                         <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
-                            <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-[#eab308] flex-shrink-0 mt-1" />
+                            <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-[#D4A017] flex-shrink-0 mt-1" />
                             <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-white leading-tight">
                                 {evento.titulo}
                             </h1>
@@ -339,7 +339,7 @@ export default function EventoView() {
                                         href={botao.link}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center justify-center gap-2 px-5 py-3.5 sm:px-6 sm:py-3 bg-[#eab308] hover:bg-[#eab308]/90 text-black font-bold rounded-lg transition-colors text-base sm:text-base"
+                                        className="flex items-center justify-center gap-2 px-5 py-3.5 sm:px-6 sm:py-3 bg-[#D4A017] hover:bg-[#D4A017]/90 text-black font-bold rounded-lg transition-colors text-base sm:text-base"
                                     >
                                         <ExternalLink className="w-5 h-5" />
                                         {botao.texto}
@@ -366,9 +366,9 @@ export default function EventoView() {
                         {/* Contador de Vagas */}
                         {(evento.metaInscricoes ?? 0) > 0 && evento.inscricaoHabilitada !== false && (
                             <div className="mb-6">
-                                <div className="bg-gradient-to-r from-[#eab308]/10 to-transparent border-l-4 border-[#eab308] rounded-lg p-4">
+                                <div className="bg-gradient-to-r from-[#D4A017]/10 to-transparent border-l-4 border-[#D4A017] rounded-lg p-4">
                                     <div className="flex items-center gap-3 mb-2">
-                                        <Users className="w-5 h-5 text-[#eab308]" />
+                                        <Users className="w-5 h-5 text-[#D4A017]" />
                                         <span className="text-white font-semibold">Vagas Disponíveis</span>
                                     </div>
                                     {loading ? (
@@ -379,7 +379,7 @@ export default function EventoView() {
                                     ) : (
                                         <>
                                             <div className="flex items-baseline gap-2">
-                                                <span className="text-3xl font-black text-[#eab308]">
+                                                <span className="text-3xl font-black text-[#D4A017]">
                                                     {Math.max(0, (evento.metaInscricoes ?? 0) - totalInscricoes)}
                                                 </span>
                                                 <span className="text-zinc-400">
@@ -390,7 +390,7 @@ export default function EventoView() {
                                                 <div className="mt-2">
                                                     <div className="w-full bg-zinc-800 rounded-full h-2 overflow-hidden">
                                                         <div
-                                                            className="bg-[#eab308] h-full transition-all duration-500"
+                                                            className="bg-[#D4A017] h-full transition-all duration-500"
                                                             style={{ width: `${Math.min(100, (totalInscricoes / (evento.metaInscricoes ?? 1)) * 100)}%` }}
                                                         />
                                                     </div>
@@ -423,7 +423,7 @@ export default function EventoView() {
                                                         href={evento.linkFormularioExterno}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="flex items-center justify-center gap-2 w-full py-4 sm:py-4 bg-[#eab308] hover:bg-[#eab308]/90 text-black font-bold text-base sm:text-lg rounded-lg transition-colors active:scale-[0.98]"
+                                                        className="flex items-center justify-center gap-2 w-full py-4 sm:py-4 bg-[#D4A017] hover:bg-[#D4A017]/90 text-black font-bold text-base sm:text-lg rounded-lg transition-colors active:scale-[0.98]"
                                                     >
                                                         <ExternalLink className="w-5 h-5" />
                                                         Fazer Inscrição
@@ -438,7 +438,7 @@ export default function EventoView() {
                                             /* Formulário interno habilitado */
                                             <button
                                                 onClick={() => setMostrarFormulario(true)}
-                                                className="w-full py-4 sm:py-4 bg-[#eab308] hover:bg-[#eab308]/90 text-black font-bold text-base sm:text-lg rounded-lg transition-colors active:scale-[0.98]"
+                                                className="w-full py-4 sm:py-4 bg-[#D4A017] hover:bg-[#D4A017]/90 text-black font-bold text-base sm:text-lg rounded-lg transition-colors active:scale-[0.98]"
                                             >
                                                 Quero Participar
                                             </button>
@@ -462,7 +462,7 @@ export default function EventoView() {
                                             onChange={handleFormChange}
                                             required
                                             autoComplete="name"
-                                            className="w-full px-4 py-3 bg-[#242424] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#eab308]"
+                                            className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#D4A017]"
                                         />
                                     </div>
 
@@ -477,7 +477,7 @@ export default function EventoView() {
                                             autoComplete="tel"
                                             inputMode="numeric"
                                             placeholder="(00) 00000-0000"
-                                            className="w-full px-4 py-3 bg-[#242424] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#eab308]"
+                                            className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#D4A017]"
                                         />
                                     </div>
 
@@ -490,7 +490,7 @@ export default function EventoView() {
                                             onChange={handleFormChange}
                                             autoComplete="email"
                                             inputMode="email"
-                                            className="w-full px-4 py-3 bg-[#242424] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#eab308]"
+                                            className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#D4A017]"
                                         />
                                     </div>
 
@@ -505,11 +505,11 @@ export default function EventoView() {
                                                 autoComplete="postal-code"
                                                 inputMode="numeric"
                                                 placeholder="00000-000"
-                                                className="w-full px-4 py-3 bg-[#242424] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#eab308]"
+                                                className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#D4A017]"
                                             />
                                             {isSearchingCep && (
                                                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                                    <Loader2 className="w-5 h-5 text-[#eab308] animate-spin" />
+                                                    <Loader2 className="w-5 h-5 text-[#D4A017] animate-spin" />
                                                 </div>
                                             )}
                                         </div>
@@ -524,7 +524,7 @@ export default function EventoView() {
                                                 value={formData.bairro}
                                                 onChange={handleFormChange}
                                                 autoComplete="address-level3"
-                                                className="w-full px-4 py-3 bg-[#242424] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#eab308]"
+                                                className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#D4A017]"
                                             />
                                         </div>
 
@@ -536,7 +536,7 @@ export default function EventoView() {
                                                 value={formData.cidade}
                                                 onChange={handleFormChange}
                                                 autoComplete="address-level2"
-                                                className="w-full px-4 py-3 bg-[#242424] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#eab308]"
+                                                className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#D4A017]"
                                             />
                                         </div>
                                     </div>
@@ -548,7 +548,7 @@ export default function EventoView() {
                                             value={formData.estado}
                                             onChange={handleFormChange}
                                             autoComplete="address-level1"
-                                            className="w-full px-4 py-3 bg-[#242424] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#eab308]"
+                                            className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#D4A017]"
                                         >
                                             <option value="">Selecione</option>
                                             {states.map(state => (
@@ -567,7 +567,7 @@ export default function EventoView() {
                                             className="mt-1"
                                         />
                                         <label htmlFor="termos" className="text-sm text-zinc-300">
-                                            Aceito os <Link to="/LGPD" target="_blank" className="text-[#eab308] hover:underline">termos de uso e política de privacidade</Link> *
+                                            Aceito os <Link to="/LGPD" target="_blank" className="text-[#D4A017] hover:underline">termos de uso e política de privacidade</Link> *
                                         </label>
                                     </div>
 
@@ -603,7 +603,7 @@ export default function EventoView() {
                                         <button
                                             type="submit"
                                             disabled={submitting}
-                                            className="flex-1 py-3 bg-[#eab308] hover:bg-[#eab308]/90 text-black font-bold rounded-lg transition-colors disabled:opacity-50"
+                                            className="flex-1 py-3 bg-[#D4A017] hover:bg-[#D4A017]/90 text-black font-bold rounded-lg transition-colors disabled:opacity-50"
                                         >
                                             {submitting ? 'Enviando...' : 'Confirmar Inscrição'}
                                         </button>

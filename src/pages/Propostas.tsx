@@ -2,15 +2,16 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, X, Check } from 'lucide-react';
 import { propostas, type Proposta } from '../data/propostas';
+import { LIVRO_AMARELO, RENAN_PROPOSTAS } from '../config/links';
 
 // Cores por coluna do grid: 1 preta, 2 branca, 3 amarela.
 const temas = [
     {
-        card: 'bg-black border-white/15 hover:border-[#eab308]',
+        card: 'bg-black border-white/15 hover:border-[#D4A017]',
         titulo: 'text-white',
         texto: 'text-white/70',
-        acento: 'text-[#eab308]',
-        marcador: 'bg-[#eab308]',
+        acento: 'text-[#D4A017]',
+        marcador: 'bg-[#D4A017]',
         modal: 'bg-black border-white/15',
         modalTitulo: 'text-white',
         modalTexto: 'text-white/80',
@@ -18,7 +19,7 @@ const temas = [
         fechar: 'text-white hover:bg-white/10'
     },
     {
-        card: 'bg-white border-black/10 hover:border-[#eab308]',
+        card: 'bg-white border-black/10 hover:border-[#D4A017]',
         titulo: 'text-black',
         texto: 'text-black/70',
         acento: 'text-black',
@@ -30,12 +31,12 @@ const temas = [
         fechar: 'text-black hover:bg-black/10'
     },
     {
-        card: 'bg-[#eab308] border-black/10 hover:border-black',
+        card: 'bg-[#D4A017] border-black/10 hover:border-black',
         titulo: 'text-black',
         texto: 'text-black/70',
         acento: 'text-black',
         marcador: 'bg-black',
-        modal: 'bg-[#eab308] border-black/10',
+        modal: 'bg-[#D4A017] border-black/10',
         modalTitulo: 'text-black',
         modalTexto: 'text-black/80',
         modalTopico: 'text-black/90',
@@ -65,7 +66,7 @@ export default function Propostas() {
     }, [aberta]);
 
     return (
-        <div className="min-h-screen bg-[#1a1a1a]">
+        <div className="min-h-screen bg-[#0a0a0a]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -73,11 +74,15 @@ export default function Propostas() {
                     transition={{ duration: 0.8 }}
                     className="text-center mb-12"
                 >
-                    <h1 className="text-4xl md:text-6xl font-black text-white mb-4">
-                        Vamos acabar <span className="text-[#eab308]">com</span>
+                    <p className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-[#D4A017]">
+                        O programa da Missão no Paraná
+                    </p>
+                    <h1 className="text-4xl md:text-6xl font-black text-white mb-4 uppercase tracking-tight">
+                        Vamos acabar <span className="text-[#D4A017]">com</span>
                     </h1>
                     <p className="text-xl text-zinc-300 max-w-2xl mx-auto">
-                        Clique em uma proposta para ler o compromisso completo.
+                        Cada compromisso aqui nasce do mesmo programa que Renan Santos leva à
+                        Presidência. Clique para ler por inteiro.
                     </p>
                 </motion.div>
 
@@ -111,6 +116,69 @@ export default function Propostas() {
                         );
                     })}
                 </div>
+                {/* De onde vem o programa: o Livro Amarelo do Partido Missão. */}
+                <motion.section
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.7 }}
+                    className="mt-20 overflow-hidden rounded-2xl border-2 border-[#D4A017]/40 bg-[#111111]"
+                >
+                    <div className="grid md:grid-cols-5">
+                        <div className="md:col-span-3 p-8 md:p-12">
+                            <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#D4A017]">
+                                O programa completo
+                            </p>
+                            <h2 className="mt-4 text-4xl md:text-5xl font-black text-white leading-none">
+                                Conheça o
+                                <br />
+                                <span className="text-[#D4A017]">Livro Amarelo</span>
+                            </h2>
+                            <p className="mt-6 text-lg text-white/70 leading-relaxed max-w-xl">
+                                Todo partido promete; a Missão escreveu. São mais de 400 páginas
+                                de diagnóstico e proposta, inscritas no estatuto do partido para
+                                serem cobradas. É de lá que sai o que o Pedro defende em Brasília
+                                — e o que o Renan defende na Presidência.
+                            </p>
+                            <div className="mt-8 flex flex-wrap gap-4">
+                                <a
+                                    href={LIVRO_AMARELO}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group inline-flex items-center gap-2 rounded-full bg-[#D4A017] px-6 py-3 font-bold uppercase tracking-wider text-black transition-all hover:brightness-110"
+                                >
+                                    Ler o Livro Amarelo
+                                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                </a>
+                                <a
+                                    href={RENAN_PROPOSTAS}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-3 font-bold uppercase tracking-wider text-white transition-all hover:border-[#D4A017] hover:text-[#D4A017]"
+                                >
+                                    As 18 propostas do Renan
+                                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Painel dourado: fica no lugar da arte do livro ate o designer
+                            entregar a imagem definitiva. */}
+                        <div className="md:col-span-2 flex items-center justify-center bg-[#D4A017] p-10">
+                            <div className="text-center">
+                                <p className="text-6xl md:text-7xl font-black leading-none text-black">14</p>
+                                <p className="mt-3 text-lg font-black uppercase tracking-[0.2em] text-black/70">
+                                    Partido Missão
+                                </p>
+                                <p className="mt-6 text-2xl font-black uppercase leading-tight text-black">
+                                    O futuro
+                                    <br />
+                                    é glorioso
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </motion.section>
             </div>
 
             {/* Modal da proposta */}

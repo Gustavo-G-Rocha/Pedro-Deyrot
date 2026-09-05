@@ -1,12 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Paleta da Missao, tirada do site do Renan (renanpresidente.com.br).
+     O dourado e a cor da campanha nacional; o preto profundo e o fundo. */
+  --color-missao-ouro: #D4A017;
+  --color-missao-ouro-claro: #F0A92B;
+  --color-missao-ouro-brilho: #FCBE26;
+  --color-missao-preto: #0a0a0a;
+  --color-missao-grafite: #111111;
+  --color-missao-creme: #FAF8F2;
 }
 
 @layer base {
   body {
-    @apply bg-[#1a1a1a] text-white font-sans;
+    @apply bg-[#0a0a0a] text-white font-sans;
   }
 }
