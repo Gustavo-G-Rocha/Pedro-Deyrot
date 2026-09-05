@@ -37,7 +37,7 @@ export const trajetoria: MarcoTrajetoria[] = [
         ano: '2023',
         titulo: 'A operação cultural',
         texto:
-            'Ajuda a construir o que a direita brasileira não tinha: imprensa, formação e uma intelectualidade própria, com o pé no Paraná.'
+            'Ajuda a construir o que a direita brasileira não tinha: imprensa, formação e uma intelectualidade própria. Assume a direção da Revista Valete e vira professor da Academia MBL, onde ensina memística e produção de conteúdo viral.'
     },
     {
         ano: '2025',
