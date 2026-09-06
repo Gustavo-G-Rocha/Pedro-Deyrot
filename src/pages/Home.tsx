@@ -13,7 +13,7 @@ export default function Home() {
                 O <picture> troca desktop/mobile baixando só o arquivo usado. */}
             <div className="relative">
                 <picture>
-                    <source media="(min-width: 768px)" srcSet="/fundohome-2026.webp" />
+                    <source media="(min-width: 768px)" srcSet="/fundohomev3.png" />
                     <img
                         src="/fundomobile-2026.webp"
                         alt="Pedro Deyrot 1414 - Deputado Federal"
