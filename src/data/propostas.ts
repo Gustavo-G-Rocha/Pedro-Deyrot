@@ -1,13 +1,10 @@
-// Propostas exibidas na pagina /propostas, sob a chamada "Vamos acabar com".
+// Propostas exibidas na pagina /propostas, na ordem do material de campanha.
 // A ordem daqui e a ordem do grid (coluna 1 preta, 2 branca, 3 amarela).
 //
 // COMO PREENCHER O TEXTO DE CADA UMA:
-// enquanto `conteudo` estiver vazio, o modal mostra so o titulo e um aviso de
-// "em breve". Basta escrever os paragrafos dentro de `conteudo` (cada string
-// vira um paragrafo) e, se quiser, os compromissos em `topicos`. Exemplo:
-//
-//     conteudo: ['Primeiro paragrafo.', 'Segundo paragrafo.'],
-//     topicos: ['Compromisso um', 'Compromisso dois']
+// cada string de `conteudo` vira um paragrafo dentro do modal que abre ao
+// clicar no titulo. Se `conteudo` ficar vazio, o modal mostra so o titulo e um
+// aviso de "em breve". Os compromissos objetivos entram em `topicos`.
 
 export interface Proposta {
     id: string;
@@ -22,43 +19,45 @@ export interface Proposta {
 
 export const propostas: Proposta[] = [
     {
-        id: 'crime-organizado',
-        titulo: 'O crime organizado',
-        conteudo: []
+        id: 'territorio-faccao',
+        titulo: 'Nenhum território controlado por facção',
+        conteudo: [
+            'Vamos reaver o que foi tomado do povo, destruir as facções, prender ou matar os líderes do crime e reestabelecer a bandeira do Brasil em todo o território nacional.'
+        ]
     },
     {
-        id: 'ipva-abusivo',
-        titulo: 'O IPVA abusivo',
-        conteudo: []
+        id: 'desfavelizacao-moradia-digna',
+        titulo: 'Desfavelização e Moradia Digna',
+        conteudo: [
+            'Vamos transformar toda favela em bairro: saneamento, vias abertas e comércio local. Lei e ordem nas ruas e segurança para o povo.'
+        ]
     },
     {
-        id: 'salarios-policia',
-        titulo: 'Os salários baixos da polícia',
-        conteudo: []
+        id: 'mais-emprego-menos-bolsa-familia',
+        titulo: 'Mais emprego, Menos Bolsa Família',
+        conteudo: [
+            'País rico não deixa seu povo dependente do governo. Metas locais de emprego, frentes de trabalho em cada município e complemento de renda para quem tiver trabalho formal.'
+        ]
     },
     {
-        id: 'abusos-judiciario',
-        titulo: 'Os abusos do Judiciário',
-        conteudo: []
+        id: 'comida-mais-barata',
+        titulo: 'Comida mais barata no prato',
+        conteudo: [
+            'O Brasil alimenta o mundo, mas o brasileiro não enche o carrinho. Vamos zerar imposto sobre alimento, destravar estradas e portos e tirar a burocracia das costas do produtor.'
+        ]
     },
     {
-        id: 'taxacao-blusinhas',
-        titulo: 'A taxação das blusinhas',
-        conteudo: []
+        id: 'fusao-de-municipios',
+        titulo: 'Fusão de Municípios',
+        conteudo: [
+            'Vamos cortar municípios que não se sustentam e acabar com a classe política parasitária. Prefeitos terão metas: quem não cumprir ficará inelegível.'
+        ]
     },
     {
-        id: 'impunidade-penal',
-        titulo: 'A impunidade penal',
-        conteudo: []
-    },
-    {
-        id: 'favelas',
-        titulo: 'As favelas',
-        conteudo: []
-    },
-    {
-        id: 'supersalarios',
-        titulo: 'Os supersalários',
-        conteudo: []
+        id: 'alfabetizacao-das-criancas',
+        titulo: 'Alfabetização das Crianças',
+        conteudo: [
+            'Escola sem autoridade não alfabetiza. Vamos devolver o comando ao professor, tirar a ideologia da sala de aula e premiar quem entrega resultado.'
+        ]
     }
 ];

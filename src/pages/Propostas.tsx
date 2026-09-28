@@ -75,14 +75,14 @@ export default function Propostas() {
                     className="text-center mb-12"
                 >
                     <p className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-[#D4A017]">
-                        O programa da Missão no Paraná
+                        O candidato do Renan Santos no Paraná
                     </p>
                     <h1 className="text-4xl md:text-6xl font-black text-white mb-4 uppercase tracking-tight">
-                        Vamos acabar <span className="text-[#D4A017]">com</span>
+                        Pro<span className="text-[#D4A017]">postas</span>
                     </h1>
                     <p className="text-xl text-zinc-300 max-w-2xl mx-auto">
                         Cada compromisso aqui nasce do mesmo programa que Renan Santos leva à
-                        Presidência. Clique para ler por inteiro.
+                        Presidência. Clique no título para ler por inteiro.
                     </p>
                 </motion.div>
 
@@ -100,9 +100,14 @@ export default function Propostas() {
                                 transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
                                 className={`group text-left flex flex-col justify-between h-full min-h-[11rem] rounded-2xl p-8 border-2 transition-all hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1 cursor-pointer ${tema.card}`}
                             >
-                                <h2 className={`text-2xl md:text-3xl font-black leading-tight ${tema.titulo}`}>
-                                    {proposta.titulo}
-                                </h2>
+                                <div>
+                                    <span className={`block text-5xl font-black leading-none ${tema.acento}`}>
+                                        {i + 1}
+                                    </span>
+                                    <h2 className={`mt-3 text-2xl md:text-3xl font-black leading-tight ${tema.titulo}`}>
+                                        {proposta.titulo}
+                                    </h2>
+                                </div>
                                 {proposta.resumo && (
                                     <p className={`mt-3 flex-1 leading-relaxed ${tema.texto}`}>
                                         {proposta.resumo}
