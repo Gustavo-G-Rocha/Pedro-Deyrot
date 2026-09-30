@@ -47,10 +47,26 @@ router.post("/:id/inscricoes", async (req, res) => {
   }
 
   const b = req.body ?? {};
+
+  // Mesmo criterio do cadastro de voluntario: sem consentimento especifico e
+  // sem a declaracao de idade nao se grava inscricao (LGPD, arts. 5, II e 11, I).
+  if (!b.termos) {
+    return res.status(400).json({
+      error: "E preciso autorizar o tratamento dos dados para se inscrever",
+    });
+  }
+
+  if (!b.maiorIdade) {
+    return res.status(400).json({
+      error: "A inscricao e permitida apenas para maiores de 16 anos",
+    });
+  }
+
   const inscricao = await queryOne<{ id: string }>(
     `INSERT INTO evento_inscricoes
-       (evento_id, evento_titulo, nome, ddi, whatsapp, email, cep, bairro, estado, cidade)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       (evento_id, evento_titulo, nome, ddi, whatsapp, email, cep, bairro, estado, cidade,
+        termos, maior_idade, comunicacoes, politica_versao, consentimento_em)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, now())
      RETURNING id`,
     [
       evento.id,
@@ -63,6 +79,10 @@ router.post("/:id/inscricoes", async (req, res) => {
       b.bairro ?? "",
       b.estado ?? "",
       b.cidade ?? "",
+      Boolean(b.termos),
+      Boolean(b.maiorIdade),
+      Boolean(b.comunicacoes),
+      b.versaoPolitica ?? "",
     ]
   );
 

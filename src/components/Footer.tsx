@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import {
     WHATSAPP_GRUPO,
-    materialHref,
     RENAN_SITE,
     RENAN_PROPOSTAS,
     LIVRO_AMARELO,
@@ -64,16 +63,6 @@ export default function Footer() {
                                 <Link to="/voluntarios" className="hover:text-[#D4A017] transition-colors">
                                     Seja voluntário
                                 </Link>
-                            </li>
-                            <li>
-                                <a
-                                    href={materialHref}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:text-[#D4A017] transition-colors"
-                                >
-                                    Pedir kit
-                                </a>
                             </li>
                             <li>
                                 <a

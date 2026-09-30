@@ -4,6 +4,7 @@ import { eventos as eventosApi } from '../lib/api';
 import { motion } from 'motion/react';
 import { Calendar, ExternalLink, Loader2, ArrowLeft, CheckCircle2, AlertCircle, Users, Share2 } from 'lucide-react';
 import AvisoEleitoral from '../components/AvisoEleitoral';
+import { IDADE_MINIMA, PRAZO_DESCADASTRO, VERSAO_POLITICA } from '../config/campanha';
 
 interface Botao {
     texto: string;
@@ -42,7 +43,12 @@ export default function EventoView() {
         bairro: '',
         estado: '',
         cidade: '',
-        termos: false
+        // Consentimento separado: o obrigatorio cobre o tratamento dos dados, a
+        // declaracao de idade trava menores de 16 e o opcional e so o envio de
+        // mensagens. Autorizacao generica e nula (LGPD, art. 8, par. 4).
+        termos: false,
+        maiorIdade: false,
+        comunicacoes: false
     });
     const [submitting, setSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -126,7 +132,7 @@ export default function EventoView() {
             fetchCep(value);
         }
 
-        if (name === 'termos' && val) {
+        if ((name === 'termos' || name === 'maiorIdade') && val) {
             setTermosError(false);
         }
     };
@@ -140,7 +146,9 @@ export default function EventoView() {
             bairro: '',
             estado: '',
             cidade: '',
-            termos: false
+            termos: false,
+            maiorIdade: false,
+            comunicacoes: false
         });
         setSubmitStatus('idle');
         setSubmitMessage('');
@@ -150,7 +158,8 @@ export default function EventoView() {
     const handleSubmitLead = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.termos) {
+        // O servidor repete essa checagem: aqui e so para nao gastar o clique.
+        if (!formData.termos || !formData.maiorIdade) {
             setTermosError(true);
             return;
         }
@@ -179,7 +188,11 @@ export default function EventoView() {
                 cep: formData.cep,
                 bairro: formData.bairro,
                 estado: formData.estado,
-                cidade: formData.cidade
+                cidade: formData.cidade,
+                termos: formData.termos,
+                maiorIdade: formData.maiorIdade,
+                comunicacoes: formData.comunicacoes,
+                versaoPolitica: VERSAO_POLITICA
             });
             setTotalInscricoes(novoTotal);
 
@@ -558,22 +571,74 @@ export default function EventoView() {
                                         </select>
                                     </div>
 
-                                    <div className={`flex items-start gap-3 p-4 rounded-lg ${termosError ? 'bg-red-500/10 border border-red-500' : 'bg-zinc-800/50'}`}>
-                                        <input
-                                            type="checkbox"
-                                            name="termos"
-                                            id="termos"
-                                            checked={formData.termos}
-                                            onChange={handleFormChange}
-                                            className="mt-1"
-                                        />
-                                        <label htmlFor="termos" className="text-sm text-zinc-300">
-                                            Aceito os <Link to="/LGPD" target="_blank" className="text-[#D4A017] hover:underline">termos de uso e política de privacidade</Link> *
-                                        </label>
-                                    </div>
+                                    {/* Consentimento separado: participar de evento de
+                                        campanha revela opiniao politica, que e dado
+                                        sensivel. Nenhuma caixa vem marcada. */}
+                                    <fieldset className={`space-y-3 rounded-lg p-4 ${termosError ? 'bg-red-500/10 border border-red-500' : 'bg-zinc-800/50'}`}>
+                                        <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+                                            Autorizações
+                                        </legend>
+
+                                        <div className="flex items-start gap-3">
+                                            <input
+                                                type="checkbox"
+                                                name="termos"
+                                                id="termos"
+                                                required
+                                                checked={formData.termos}
+                                                onChange={handleFormChange}
+                                                className="mt-1 flex-shrink-0"
+                                            />
+                                            <label htmlFor="termos" className="text-sm text-zinc-300">
+                                                <span className="font-semibold text-white">Obrigatório.</span>{' '}
+                                                Autorizo a campanha a tratar os meus dados, inclusive o fato
+                                                de eu participar deste evento, que é dado sensível, para
+                                                organizar a inscrição, conforme a{' '}
+                                                <Link to="/LGPD" target="_blank" className="text-[#D4A017] hover:underline">
+                                                    Política de Privacidade
+                                                </Link>
+                                                .
+                                            </label>
+                                        </div>
+
+                                        <div className="flex items-start gap-3">
+                                            <input
+                                                type="checkbox"
+                                                name="maiorIdade"
+                                                id="maiorIdade"
+                                                required
+                                                checked={formData.maiorIdade}
+                                                onChange={handleFormChange}
+                                                className="mt-1 flex-shrink-0"
+                                            />
+                                            <label htmlFor="maiorIdade" className="text-sm text-zinc-300">
+                                                <span className="font-semibold text-white">Obrigatório.</span>{' '}
+                                                Declaro que tenho {IDADE_MINIMA} anos ou mais.
+                                            </label>
+                                        </div>
+
+                                        <div className="flex items-start gap-3">
+                                            <input
+                                                type="checkbox"
+                                                name="comunicacoes"
+                                                id="comunicacoes"
+                                                checked={formData.comunicacoes}
+                                                onChange={handleFormChange}
+                                                className="mt-1 flex-shrink-0"
+                                            />
+                                            <label htmlFor="comunicacoes" className="text-sm text-zinc-300">
+                                                <span className="font-semibold text-white">Opcional.</span>{' '}
+                                                Quero receber mensagens da campanha por WhatsApp e e-mail.
+                                                Posso sair da lista quando quiser, e o pedido é atendido em
+                                                até {PRAZO_DESCADASTRO}.
+                                            </label>
+                                        </div>
+                                    </fieldset>
 
                                     {termosError && (
-                                        <p className="text-red-500 text-sm">Você precisa aceitar os termos para continuar.</p>
+                                        <p className="text-red-500 text-sm">
+                                            Marque as duas autorizações obrigatórias para concluir a inscrição.
+                                        </p>
                                     )}
 
                                     {submitStatus === 'success' && (

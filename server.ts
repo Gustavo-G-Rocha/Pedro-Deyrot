@@ -74,6 +74,17 @@ async function startServer() {
       const formData = req.body;
       const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
+      // O espelho para a planilha e a outra porta de entrada dos mesmos dados:
+      // sem o consentimento e a declaracao de idade, nao entra nada na planilha
+      // tambem. Sem isso um POST direto aqui driblava a checagem da API.
+      if (!formData?.termos || !formData?.maiorIdade) {
+        console.warn("⚠️ [API] Envio sem consentimento ou sem declaracao de idade, recusado");
+        return res.status(400).json({
+          success: false,
+          error: "E preciso autorizar o tratamento dos dados e declarar ter 16 anos ou mais",
+        });
+      }
+
       console.log('📨 [API] Recebido formulário:', {
         email: formData.email,
         tipo: formData.tipo,

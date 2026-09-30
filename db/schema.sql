@@ -61,6 +61,14 @@ CREATE TABLE IF NOT EXISTS evento_inscricoes (
 );
 CREATE INDEX IF NOT EXISTS idx_evento_inscricoes_evento ON evento_inscricoes (evento_id);
 
+-- A inscricao em evento nao guardava consentimento nenhum. Mesmas colunas do
+-- cadastro de voluntario, pelo mesmo motivo.
+ALTER TABLE evento_inscricoes ADD COLUMN IF NOT EXISTS termos           BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE evento_inscricoes ADD COLUMN IF NOT EXISTS maior_idade      BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE evento_inscricoes ADD COLUMN IF NOT EXISTS comunicacoes     BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE evento_inscricoes ADD COLUMN IF NOT EXISTS politica_versao  TEXT NOT NULL DEFAULT '';
+ALTER TABLE evento_inscricoes ADD COLUMN IF NOT EXISTS consentimento_em TIMESTAMPTZ;
+
 -- ---------------------------------------------------------------------------
 -- Denuncias / dossies
 -- O mapa "estatisticas" virou colunas, para permitir UPDATE atomico.
@@ -144,6 +152,13 @@ CREATE TABLE IF NOT EXISTS voluntarios (
     termos         BOOLEAN NOT NULL DEFAULT false,
     criado_em      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Prova do consentimento: quais autorizacoes a pessoa deu, sob qual versao da
+-- politica e quando. A tabela ja existia em producao, entao entra por ALTER.
+ALTER TABLE voluntarios ADD COLUMN IF NOT EXISTS maior_idade      BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE voluntarios ADD COLUMN IF NOT EXISTS comunicacoes     BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE voluntarios ADD COLUMN IF NOT EXISTS politica_versao  TEXT NOT NULL DEFAULT '';
+ALTER TABLE voluntarios ADD COLUMN IF NOT EXISTS consentimento_em TIMESTAMPTZ;
 
 -- ---------------------------------------------------------------------------
 -- Assinaturas do abaixo-assinado

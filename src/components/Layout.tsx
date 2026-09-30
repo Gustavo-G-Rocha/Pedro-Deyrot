@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Home, Users, Calendar, ClipboardList, Package, Flag } from 'lucide-react';
-import { materialHref, RENAN_SITE } from '../config/links';
+import { Home, Users, Calendar, ClipboardList, Flag } from 'lucide-react';
+import { RENAN_SITE } from '../config/links';
 import Footer from './Footer';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -36,16 +36,6 @@ export default function Layout() {
                         {/* Menu Desktop */}
                         <div className="hidden md:flex items-center space-x-8">
                             <a
-                                href={materialHref}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 rounded-full bg-[#D4A017] px-4 py-2 text-sm font-bold uppercase tracking-wider text-black transition-all hover:brightness-110"
-                            >
-                                <Package className="w-4 h-4" />
-                                Pedir kit
-                            </a>
-
-                            <a
                                 href={RENAN_SITE}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -68,17 +58,6 @@ export default function Layout() {
                                 </Link>
                             ))}
                         </div>
-
-                        {/* Mobile: botão à direita; o absolute mantém a logo centralizada */}
-                        <a
-                            href={materialHref}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="md:hidden absolute right-0 inline-flex items-center gap-1.5 rounded-full bg-[#D4A017] px-3 py-2 text-xs font-bold uppercase tracking-wider text-black transition-all active:brightness-110"
-                        >
-                            <Package className="w-4 h-4" />
-                            Kit
-                        </a>
                     </div>
                 </nav>
             </header>

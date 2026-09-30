@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowRight, Users, Calendar, MessageCircle, Package } from 'lucide-react';
-import { WHATSAPP_GRUPO, materialHref } from '../config/links';
+import { ArrowRight, Users, Calendar, MessageCircle } from 'lucide-react';
+import { WHATSAPP_GRUPO } from '../config/links';
 import Chapa1414 from '../components/Chapa1414';
 import Trajetoria from '../components/Trajetoria';
 
@@ -64,19 +64,8 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.3 }}
                     transition={{ duration: 0.8, delay: 0.1 }}
-                    className="mb-6 max-w-4xl mx-auto grid sm:grid-cols-2 gap-4"
+                    className="mb-6 max-w-4xl mx-auto"
                 >
-                    <a
-                        href={materialHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex items-center justify-center gap-3 rounded-2xl bg-[#D4A017] px-6 py-5 text-black font-bold text-lg transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-[#D4A017]/25"
-                    >
-                        <Package className="w-6 h-6" />
-                        Pedir kit
-                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                    </a>
-
                     <a
                         href={WHATSAPP_GRUPO}
                         target="_blank"

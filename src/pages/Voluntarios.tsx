@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { voluntarios as voluntariosApi } from '../lib/api';
+import { IDADE_MINIMA, PRAZO_DESCADASTRO, VERSAO_POLITICA } from '../config/campanha';
 
 export default function Voluntarios() {
     const ddiOptions = [
@@ -87,7 +88,12 @@ export default function Voluntarios() {
         estado: '',
         cidade: '',
         especialidade: '',
-        termos: false
+        // Consentimento separado, como manda a LGPD (art. 8, par. 4): uma
+        // autorizacao generica para tudo e nula. `termos` e `maiorIdade` sao
+        // obrigatorios; `comunicacoes` e opcional e nao trava o cadastro.
+        termos: false,
+        maiorIdade: false,
+        comunicacoes: false
     });
 
     const filteredDdi = ddiOptions.filter(opt =>
@@ -131,8 +137,8 @@ export default function Voluntarios() {
         const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
         setFormData(prev => ({ ...prev, [name]: val }));
 
-        // Limpar erro de termos quando checkbox for marcado
-        if (name === 'termos' && val) {
+        // Limpar o erro quando o consentimento obrigatorio for marcado
+        if ((name === 'termos' || name === 'maiorIdade') && val) {
             setTermosError(false);
         }
     };
@@ -140,7 +146,9 @@ export default function Voluntarios() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.termos) {
+        // Sem consentimento e sem a declaracao de idade nao ha cadastro. O
+        // servidor repete essa checagem: aqui e so conforto para o usuario.
+        if (!formData.termos || !formData.maiorIdade) {
             setTermosError(true);
             return;
         }
@@ -150,7 +158,7 @@ export default function Voluntarios() {
         try {
             // Salvar no banco
             try {
-                await voluntariosApi.criar(formData);
+                await voluntariosApi.criar({ ...formData, versaoPolitica: VERSAO_POLITICA });
             } catch (dbError) {
                 console.error("Erro ao salvar no banco:", dbError);
                 // Não interrompe o fluxo para tentar enviar pro Google Sheets
@@ -177,7 +185,9 @@ export default function Voluntarios() {
                     estado: '',
                     cidade: '',
                     especialidade: '',
-                    termos: false
+                    termos: false,
+                    maiorIdade: false,
+                    comunicacoes: false
                 });
             } else {
                 setStatus('error');
@@ -450,20 +460,32 @@ export default function Voluntarios() {
                         <p className="text-xs text-zinc-500 mt-1 ml-1">Separe as especialidades por vírgula.</p>
                     </div>
 
-                    <div>
+                    {/* Consentimento. A LGPD trata opiniao politica como dado
+                        sensivel, entao a autorizacao precisa ser especifica e
+                        destacada: tres caixas separadas, nenhuma pre-marcada, e a
+                        opcional nao trava o cadastro. */}
+                    <fieldset className="rounded-xl border border-white/10 bg-black/20 p-4">
+                        <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+                            Autorizações
+                        </legend>
+
                         <div className="flex items-start gap-3 py-2">
                             <input
                                 id="termos"
                                 type="checkbox"
                                 name="termos"
+                                required
                                 checked={formData.termos}
                                 onChange={handleChange}
-                                className={`mt-1 h-4 w-4 rounded border-zinc-700 bg-zinc-800 text-black focus:ring-offset-0 focus:ring-0 cursor-pointer ${termosError ? 'ring-2 ring-red-500' : ''
+                                className={`mt-1 h-4 w-4 flex-shrink-0 rounded border-zinc-700 bg-zinc-800 text-black focus:ring-offset-0 focus:ring-0 cursor-pointer ${termosError && !formData.termos ? 'ring-2 ring-red-500' : ''
                                     }`}
                             />
-                            <label htmlFor="termos" className={`text-xs leading-relaxed select-none ${termosError ? 'text-red-400' : 'text-zinc-400'
+                            <label htmlFor="termos" className={`text-xs leading-relaxed select-none ${termosError && !formData.termos ? 'text-red-400' : 'text-zinc-400'
                                 }`}>
-                                Eu concordo com os{' '}
+                                <span className="font-semibold text-zinc-300">Obrigatório.</span>{' '}
+                                Autorizo a campanha a tratar os meus dados, inclusive o fato de eu
+                                apoiar esta candidatura, que é dado sensível, para organizar o
+                                trabalho voluntário, conforme a{' '}
                                 <a
                                     href="/LGPD"
                                     target="_blank"
@@ -471,11 +493,46 @@ export default function Voluntarios() {
                                     className="text-[#D4A017] hover:text-[#ca8a04] underline cursor-pointer"
                                     onClick={(e) => e.stopPropagation()}
                                 >
-                                    termos e condições
-                                </a>{' '}
-                                e autorizo o envio dos meus dados para fins de apoio e comunicação.
+                                    Política de Privacidade
+                                </a>
+                                .
                             </label>
                         </div>
+
+                        <div className="flex items-start gap-3 py-2">
+                            <input
+                                id="maiorIdade"
+                                type="checkbox"
+                                name="maiorIdade"
+                                required
+                                checked={formData.maiorIdade}
+                                onChange={handleChange}
+                                className={`mt-1 h-4 w-4 flex-shrink-0 rounded border-zinc-700 bg-zinc-800 text-black focus:ring-offset-0 focus:ring-0 cursor-pointer ${termosError && !formData.maiorIdade ? 'ring-2 ring-red-500' : ''
+                                    }`}
+                            />
+                            <label htmlFor="maiorIdade" className={`text-xs leading-relaxed select-none ${termosError && !formData.maiorIdade ? 'text-red-400' : 'text-zinc-400'
+                                }`}>
+                                <span className="font-semibold text-zinc-300">Obrigatório.</span>{' '}
+                                Declaro que tenho {IDADE_MINIMA} anos ou mais.
+                            </label>
+                        </div>
+
+                        <div className="flex items-start gap-3 py-2">
+                            <input
+                                id="comunicacoes"
+                                type="checkbox"
+                                name="comunicacoes"
+                                checked={formData.comunicacoes}
+                                onChange={handleChange}
+                                className="mt-1 h-4 w-4 flex-shrink-0 rounded border-zinc-700 bg-zinc-800 text-black focus:ring-offset-0 focus:ring-0 cursor-pointer"
+                            />
+                            <label htmlFor="comunicacoes" className="text-xs leading-relaxed text-zinc-400 select-none">
+                                <span className="font-semibold text-zinc-300">Opcional.</span>{' '}
+                                Quero receber mensagens da campanha por WhatsApp e e-mail. Posso sair
+                                da lista quando quiser, e o pedido é atendido em até {PRAZO_DESCADASTRO}.
+                            </label>
+                        </div>
+
                         {termosError && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
@@ -484,10 +541,12 @@ export default function Voluntarios() {
                                 className="mt-2 flex items-center gap-2 text-red-400 text-xs"
                             >
                                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                                <span>Você precisa aceitar os termos e condições para continuar.</span>
+                                <span>
+                                    Marque as duas autorizações obrigatórias para concluir o cadastro.
+                                </span>
                             </motion.div>
                         )}
-                    </div>
+                    </fieldset>
 
                     <button
                         type="submit"
