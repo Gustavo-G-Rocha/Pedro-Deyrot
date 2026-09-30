@@ -7,6 +7,16 @@ import {
     LIVRO_AMARELO,
     APP_MISSAO
 } from '../config/links';
+import {
+    ANO_ELEICAO,
+    CARGO,
+    CNPJ_CAMPANHA,
+    NOME_URNA,
+    NUMERO_PARTIDO,
+    PARTIDO,
+    UF
+} from '../config/campanha';
+import AvisoEleitoral from './AvisoEleitoral';
 
 /**
  * Rodape no molde do site do Renan: tres colunas de links e a assinatura da
@@ -24,7 +34,7 @@ export default function Footer() {
                             <span className="text-white/40">1414</span>
                         </p>
                         <p className="mt-4 max-w-md text-white/60 leading-relaxed">
-                            Candidato a Deputado Federal pelo Paraná, pelo Partido Missão, o 14
+                            Candidato a {CARGO} pelo {UF}, pelo {PARTIDO}, o {NUMERO_PARTIDO}{' '}
                             de Renan Santos. O futuro é glorioso, e ele começa aqui.
                         </p>
                         <div aria-hidden="true" className="mt-6 flex gap-2">
@@ -128,8 +138,13 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-white/40 sm:flex-row sm:items-center sm:justify-between">
-                    <p>© 2026 Pedro Deyrot · Partido Missão · Paraná</p>
+                {/* Identificacao exigida pela legislacao eleitoral. */}
+                <AvisoEleitoral className="mt-12 border-t border-white/10 pt-6" />
+
+                <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-white/40 sm:flex-row sm:items-center sm:justify-between">
+                    <p>
+                        © {ANO_ELEICAO} {NOME_URNA} · {PARTIDO} · {UF} · CNPJ {CNPJ_CAMPANHA}
+                    </p>
                     <Link to="/LGPD" className="hover:text-[#D4A017] transition-colors">
                         Política de Privacidade
                     </Link>

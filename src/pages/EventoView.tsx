@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { eventos as eventosApi } from '../lib/api';
 import { motion } from 'motion/react';
 import { Calendar, ExternalLink, Loader2, ArrowLeft, CheckCircle2, AlertCircle, Users, Share2 } from 'lucide-react';
+import AvisoEleitoral from '../components/AvisoEleitoral';
 
 interface Botao {
     texto: string;
@@ -613,6 +614,10 @@ export default function EventoView() {
                         )}
                     </div>
                 </motion.div>
+
+                {/* Identificacao exigida pela legislacao eleitoral: a pagina de evento
+                    e fullscreen e nao usa o rodape do Layout. */}
+                <AvisoEleitoral className="mx-auto mt-16 max-w-3xl border-t border-white/10 px-4 pt-8 sm:px-0" />
             </div>
         </div>
     );

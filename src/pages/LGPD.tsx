@@ -1,3 +1,6 @@
+import AvisoEleitoral from '../components/AvisoEleitoral';
+import { CNPJ_CAMPANHA, NOME_URNA, NUMERO_CANDIDATO } from '../config/campanha';
+
 export default function LGPD() {
     return (
         <div className="min-h-screen bg-[#111111]">
@@ -105,7 +108,14 @@ export default function LGPD() {
                         <p className="text-zinc-300 leading-relaxed mb-6">
                             O Controlador dos Dados Pessoais é Pedro Augusto Ferreira Deiro, inscrito no CPF nº 052.844.369-03, com endereço na Avenida Major Sylvio de Magalhães Padilha, nº 5200, Edifício Montreal, Térreo, Morumbi, São Paulo/SP, CEP 05693-000.
                         </p>
+                        <p className="text-zinc-300 leading-relaxed mb-6">
+                            O tratamento dos dados coletados neste site é operado pela campanha {NOME_URNA} {NUMERO_CANDIDATO}, inscrita no CNPJ nº {CNPJ_CAMPANHA} junto à Justiça Eleitoral, e se encerra com a prestação de contas da campanha, ressalvadas as hipóteses de guarda obrigatória previstas em lei.
+                        </p>
                     </div>
+
+                    {/* Identificacao exigida pela legislacao eleitoral: esta pagina roda
+                        fora do Layout, entao nao herda o rodape do site. */}
+                    <AvisoEleitoral className="mt-12 border-t border-white/10 pt-8" />
 
                     {/* Botão de voltar/fechar */}
                     <div className="mt-12 pt-8 border-t border-white/10">
